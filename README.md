@@ -1,31 +1,28 @@
-# App Template
-  
-This template is a part of the Eliona App SDK. It can be used to create an app stub for an Eliona environment.
+# Eliona app to access Kontakt.io devices
+
+This [Eliona app for Kontakt.io](https://github.com/eliona-smart-building-assistant/kontakt.io-app) connects the [Kontakt.io devices](https://kontakt.io/) to an [Eliona](https://www.eliona.io/) environment.
 
 ## Configuration
 
 The app needs environment variables and database tables for configuration. To edit the database tables the app provides an own API access.
 
-
 ### Registration in Eliona ###
 
-To start and initialize an app in an Eliona environment, the app have to registered in Eliona. For this, an entry in the database table `public.eliona_app` is necessary.
+To start and initialize an app in an Eliona environment, the app have to registered in Eliona. For this, entries in database tables `public.eliona_app` and `public.eliona_store` is necessary.
 
+The registration could be done using the reset script.
 
 ### Environment variables
 
-<mark>Todo: Describe further environment variables tables the app needs for configuration</mark>
+- `APPNAME`: must be set to `kontaktio`. Some resources use this name to identify the app inside an Eliona environment.
 
-
-- `APPNAME`: must be set to `template`. Some resources use this name to identify the app inside an Eliona environment.
-
-- `CONNECTION_STRING`: configures the [Eliona database](https://github.com/eliona-smart-building-assistant/go-eliona/tree/main/db). Otherwise, the app can't be initialized and started. (e.g. `postgres://user:pass@localhost:5432/iot`)
+- `CONNECTION_STRING`: configures the [Eliona database](https://github.com/eliona-smart-building-assistant/go-utils/tree/main/db). (e.g. `postgres://user:pass@localhost:5432/iot`)
 
 - `API_ENDPOINT`:  configures the endpoint to access the [Eliona API v2](https://github.com/eliona-smart-building-assistant/eliona-api). Otherwise, the app can't be initialized and started. (e.g. `http://api-v2:3000/v2`)
 
-- `API_TOKEN`: defines the secret to authenticate the app and access the API. 
+- `API_TOKEN`: defines the secret to authenticate the app and access the API.
 
-- `API_SERVER_PORT`(optional): define the port the API server listens. The default value is Port `3000`. <mark>Todo: Decide if the app needs its own API. If so, an API server have to implemented and the port have to be configurable.</mark>
+- `API_SERVER_PORT`(optional): defines the port the API server listens on. The default value is `3000`.
 
 - `LOG_LEVEL`(optional): defines the minimum level that should be [logged](https://github.com/eliona-smart-building-assistant/go-utils/blob/main/log/README.md). Not defined the default level is `info`.
 

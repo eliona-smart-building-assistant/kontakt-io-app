@@ -1,17 +1,21 @@
 {
- "name": "template",
- "elionaMinVersion": "9.2.0",  
+  "name": "kontaktio",
+  "elionaMinVersion": "9.2.0",
   "displayName": {
-    "en": "App template",
-    "de": "App Vorlage"
+    "en": "Kontakt.io app",
+    "de": "Kontakt.io App"
   },
   "description": {
-    "en": "This template can be used to create an app stub for an Eliona environment.",
-    "de": "Diese Vorlage kann verwendet werden um eine App für Eliona zu erstellen."
+    "en": "The Kontakt.io app allows access to Kontakt.io devices through an Eliona environment.",
+    "de": "Die Kontakt.io-App ermöglicht den Zugriff auf Kontakt.io-Geräte über eine Eliona-Umgebung."
   },
   "dashboardTemplateNames": [
-    "Template"
+    "Kontakt.io devices"
   ],
-  "documentationUrl": "https://doc.eliona.io/eliona/referenzen/app-entwicklung",
-  "useEnvironment": [ "CONNECTION_STRING", "API_ENDPOINT", "API_TOKEN" ]
+  "documentationUrl": "https://doc.eliona.io/collection/eliona-apps/externe-apps/kontaktio",
+  "useEnvironment": [
+    "CONNECTION_STRING",
+    "API_ENDPOINT",
+    "API_TOKEN"
+  ]
 }

@@ -18,8 +18,8 @@ package apiservices
 import (
 	"context"
 	"errors"
+	"kontakt-io/apiserver"
 	"net/http"
-	"template/apiserver"
 )
 
 // ConfigurationApiService is a service that implements the logic for the ConfigurationApiServicer

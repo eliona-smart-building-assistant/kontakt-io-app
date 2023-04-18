@@ -25,7 +25,7 @@ RUN go build -o ../app
 
 RUN DATE=$(date) && \
     GIT_COMMIT=$(git rev-list -1 HEAD) && \
-    go build -ldflags "-X 'template/apiservices.BuildTimestamp=$DATE' -X 'template/apiservices.GitCommit=$GIT_COMMIT'" -o ../app
+    go build -ldflags "-X 'apiservices.BuildTimestamp=$DATE' -X 'apiservices.GitCommit=$GIT_COMMIT'" -o ../app
 
 FROM eliona/base-alpine:latest-3.17 AS target
 
@@ -33,7 +33,7 @@ COPY --from=build /app ./
 COPY conf/*.sql ./conf/
 COPY apiserver/openapi.json /
 
-ENV APPNAME=template
+ENV APPNAME=kontaktio
 
 ENV TZ=Europe/Zurich
 CMD [ "/app" ]
