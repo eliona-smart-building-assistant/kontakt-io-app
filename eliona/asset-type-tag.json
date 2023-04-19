@@ -1,0 +1,133 @@
+{
+	"attributes": [
+		{
+			"enable": true,
+			"name": "id",
+			"subtype": "info",
+			"translation": {
+				"de": "ID",
+				"en": "ID"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "name",
+			"subtype": "info",
+			"translation": {
+				"de": "Name",
+				"en": "Name"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "firmware",
+			"subtype": "info",
+			"translation": {
+				"de": "Firmware",
+				"en": "Firmware"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "model",
+			"subtype": "info",
+			"translation": {
+				"de": "Modell",
+				"en": "Model"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "batterylevel",
+			"subtype": "info",
+			"translation": {
+				"de": "Batteriestand",
+				"en": "Battery Level"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "pos_x",
+			"subtype": "info",
+			"translation": {
+				"de": "Position X",
+				"en": "Position X"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "pos_y",
+			"subtype": "info",
+			"translation": {
+				"de": "Position Y",
+				"en": "Position Y"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "humidity",
+			"subtype": "info",
+			"translation": {
+				"de": "Luftfeuchtigkeit",
+				"en": "Humidity"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "light_intensity",
+			"subtype": "info",
+			"translation": {
+				"de": "Lichtintensität",
+				"en": "Light Intensity"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "temperature",
+			"subtype": "info",
+			"translation": {
+				"de": "Temperatur",
+				"en": "Temperature"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "air_quality",
+			"subtype": "info",
+			"translation": {
+				"de": "Luftqualität",
+				"en": "Air Quality"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "air_pressure",
+			"subtype": "info",
+			"translation": {
+				"de": "Luftdruck",
+				"en": "Air Pressure"
+			},
+			"type": "device-info"
+		}
+	],
+	"custom": true,
+	"icon": "button",
+	"name": "kontaktio_tag",
+	"translation": {
+		"de": "Kontakt.io Tag",
+		"en": "Kontakt.io Tag"
+	},
+	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/affd050d36283-telemetry-data-model",
+	"vendor": "Kontakt.io"
+}
