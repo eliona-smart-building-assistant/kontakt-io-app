@@ -6,6 +6,7 @@ require (
 	github.com/eliona-smart-building-assistant/go-eliona v1.9.6
 	github.com/eliona-smart-building-assistant/go-utils v1.0.20
 	github.com/gorilla/mux v1.8.0
+	github.com/volatiletech/sqlboiler/v4 v4.14.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -29,7 +30,6 @@ require (
 	github.com/lib/pq v1.10.8 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/volatiletech/inflect v0.0.1 // indirect
-	github.com/volatiletech/sqlboiler/v4 v4.14.2 // indirect
 	github.com/volatiletech/strmangle v0.0.4 // indirect
 	golang.org/x/crypto v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect

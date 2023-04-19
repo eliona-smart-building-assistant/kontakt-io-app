@@ -1,0 +1,43 @@
+{
+	"attributes": [
+		{
+			"enable": true,
+			"name": "id",
+			"subtype": "info",
+			"translation": {
+				"de": "ID",
+				"en": "ID"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "name",
+			"subtype": "info",
+			"translation": {
+				"de": "Name",
+				"en": "Name"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "level",
+			"subtype": "info",
+			"translation": {
+				"de": "Stock",
+				"en": "Level"
+			},
+			"type": "device-info"
+		}
+	],
+	"custom": true,
+	"icon": "storey",
+	"name": "kontaktio_floor",
+	"translation": {
+		"de": "Kontakt.io Stock",
+		"en": "Kontakt.io Floor"
+	},
+	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/47c308174a5f8-floors",
+	"vendor": "Kontakt.io"
+}

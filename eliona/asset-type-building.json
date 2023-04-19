@@ -1,0 +1,53 @@
+{
+	"attributes": [
+		{
+			"enable": true,
+			"name": "id",
+			"subtype": "info",
+			"translation": {
+				"de": "ID",
+				"en": "ID"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "name",
+			"subtype": "info",
+			"translation": {
+				"de": "Name",
+				"en": "Name"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "address",
+			"subtype": "info",
+			"translation": {
+				"de": "Addresse",
+				"en": "Address"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "description",
+			"subtype": "info",
+			"translation": {
+				"de": "Beschreibung",
+				"en": "Description"
+			},
+			"type": "device-info"
+		}
+	],
+	"custom": true,
+	"icon": "building",
+	"name": "kontaktio_building",
+	"translation": {
+		"de": "Kontakt.io Building",
+		"en": "Kontakt.io Building"
+	},
+	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/ad3030686b87f-building",
+	"vendor": "Kontakt.io"
+}

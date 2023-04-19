@@ -1,0 +1,33 @@
+{
+	"attributes": [
+		{
+			"enable": true,
+			"name": "id",
+			"subtype": "info",
+			"translation": {
+				"de": "ID",
+				"en": "ID"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "name",
+			"subtype": "info",
+			"translation": {
+				"de": "Name",
+				"en": "Name"
+			},
+			"type": "device-info"
+		}
+	],
+	"custom": true,
+	"icon": "closable",
+	"name": "kontaktio_room",
+	"translation": {
+		"de": "Kontakt.io Raum",
+		"en": "Kontakt.io Room"
+	},
+	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/3c77b97386967-rooms",
+	"vendor": "Kontakt.io"
+}
