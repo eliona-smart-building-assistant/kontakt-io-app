@@ -23,6 +23,7 @@ ON CONFLICT (app_name) DO UPDATE SET version = '1.0.0';
 
 INSERT INTO public.eliona_app (app_name, enable)
 VALUES ('kontaktio', 't')
+ON CONFLICT (app_name) DO UPDATE SET initialized_at = null;
 
 DROP SCHEMA IF EXISTS kontaktio CASCADE;
 
