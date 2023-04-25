@@ -16,7 +16,6 @@
 package main
 
 import (
-	"kontakt-io/conf"
 	"kontakt-io/eliona"
 	"time"
 
@@ -47,12 +46,11 @@ func main() {
 	// Init the app before the first run.
 	app.Init(db.Pool(), app.AppName(),
 		app.ExecSqlFile("conf/init.sql"),
-		conf.InitConfiguration,
 		eliona.InitEliona,
 	)
 
 	// Starting the service to collect the data for this app.
-	common.WaitFor(
+	common.WaitForWithOs(
 		common.Loop(doAnything, time.Second),
 		listenApi,
 	)

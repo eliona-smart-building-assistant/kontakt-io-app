@@ -13,8 +13,46 @@
 --  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-create schema if not exists template;
+create schema if not exists kontaktio;
 
---
--- Todo: create tables and database objects necessary for this app like tables persisting configuration
---
+-- Should be editable by eliona frontend.
+create table if not exists kontaktio.configuration
+(
+	id               bigserial primary key,
+	api_address      text,
+	api_key          text,
+	absolute_x       integer not null default 0,
+	absolute_y       integer not null default 0,
+	refresh_interval integer not null default 60,
+	request_timeout  integer not null default 120,
+	asset_filter     json,
+	active           boolean default false,
+	enable           boolean default false,
+	project_ids      text[]
+);
+
+-- Location corresponds to one asset in Eliona
+-- Should be read-only by eliona frontend.
+create table if not exists kontaktio.location
+(
+	id               bigserial primary key,
+	parent_id        bigserial references kontaktio.location(id),
+	configuration_id bigserial not null references kontaktio.configuration(id),
+	project_id       text      not null,
+	serial_number    integer   not null,
+	asset_id         integer
+);
+
+-- Tag corresponds to one asset in Eliona
+-- Should be read-only by eliona frontend.
+create table if not exists kontaktio.tag
+(
+	configuration_id bigserial references kontaktio.configuration(id),
+	project_id       text      not null,
+	serial_number    text      not null,
+	asset_id         integer,
+	primary key (configuration_id, project_id, serial_number)
+);
+
+-- Makes the new objects available for all other init steps
+commit;

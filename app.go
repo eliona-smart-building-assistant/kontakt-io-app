@@ -18,10 +18,9 @@ package main
 import (
 	"kontakt-io/apiserver"
 	"kontakt-io/apiservices"
-	nethttp "net/http"
+	"net/http"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
-	"github.com/eliona-smart-building-assistant/go-utils/http"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
@@ -35,9 +34,10 @@ func doAnything() {
 
 // listenApi starts the API server and listen for requests
 func listenApi() {
-	http.ListenApiWithOs(&nethttp.Server{Addr: ":" + common.Getenv("API_SERVER_PORT", "3000"), Handler: apiserver.NewRouter(
+	err := http.ListenAndServe(":"+common.Getenv("API_SERVER_PORT", "3000"), apiserver.NewRouter(
 		apiserver.NewConfigurationApiController(apiservices.NewConfigurationApiService()),
 		apiserver.NewVersionApiController(apiservices.NewVersionApiService()),
 		apiserver.NewCustomizationApiController(apiservices.NewCustomizationApiService()),
-	)})
+	))
+	log.Fatal("main", "API server: %v", err)
 }
