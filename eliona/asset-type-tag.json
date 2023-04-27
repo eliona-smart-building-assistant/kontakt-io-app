@@ -123,7 +123,7 @@
 	],
 	"custom": true,
 	"icon": "button",
-	"name": "kontaktio_tag",
+	"name": "kontakt_io_tag",
 	"translation": {
 		"de": "Kontakt.io Tag",
 		"en": "Kontakt.io Tag"

@@ -138,12 +138,12 @@ var LocationWhere = struct {
 	SerialNumber    whereHelperint32
 	AssetID         whereHelpernull_Int32
 }{
-	ID:              whereHelperint64{field: "\"kontaktio\".\"location\".\"id\""},
-	ParentID:        whereHelperint64{field: "\"kontaktio\".\"location\".\"parent_id\""},
-	ConfigurationID: whereHelperint64{field: "\"kontaktio\".\"location\".\"configuration_id\""},
-	ProjectID:       whereHelperstring{field: "\"kontaktio\".\"location\".\"project_id\""},
-	SerialNumber:    whereHelperint32{field: "\"kontaktio\".\"location\".\"serial_number\""},
-	AssetID:         whereHelpernull_Int32{field: "\"kontaktio\".\"location\".\"asset_id\""},
+	ID:              whereHelperint64{field: "\"kontakt_io\".\"location\".\"id\""},
+	ParentID:        whereHelperint64{field: "\"kontakt_io\".\"location\".\"parent_id\""},
+	ConfigurationID: whereHelperint64{field: "\"kontakt_io\".\"location\".\"configuration_id\""},
+	ProjectID:       whereHelperstring{field: "\"kontakt_io\".\"location\".\"project_id\""},
+	SerialNumber:    whereHelperint32{field: "\"kontakt_io\".\"location\".\"serial_number\""},
+	AssetID:         whereHelpernull_Int32{field: "\"kontakt_io\".\"location\".\"asset_id\""},
 }
 
 // LocationRels is where relationship names are stored.
@@ -529,7 +529,7 @@ func (o *Location) ParentLocations(mods ...qm.QueryMod) locationQuery {
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"kontaktio\".\"location\".\"parent_id\"=?", o.ID),
+		qm.Where("\"kontakt_io\".\"location\".\"parent_id\"=?", o.ID),
 	)
 
 	return Locations(queryMods...)
@@ -593,8 +593,8 @@ func (locationL) LoadConfiguration(ctx context.Context, e boil.ContextExecutor, 
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.configuration`),
-		qm.WhereIn(`kontaktio.configuration.id in ?`, args...),
+		qm.From(`kontakt_io.configuration`),
+		qm.WhereIn(`kontakt_io.configuration.id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -713,8 +713,8 @@ func (locationL) LoadParent(ctx context.Context, e boil.ContextExecutor, singula
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.location`),
-		qm.WhereIn(`kontaktio.location.id in ?`, args...),
+		qm.From(`kontakt_io.location`),
+		qm.WhereIn(`kontakt_io.location.id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -831,8 +831,8 @@ func (locationL) LoadParentLocations(ctx context.Context, e boil.ContextExecutor
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.location`),
-		qm.WhereIn(`kontaktio.location.parent_id in ?`, args...),
+		qm.From(`kontakt_io.location`),
+		qm.WhereIn(`kontakt_io.location.parent_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -909,7 +909,7 @@ func (o *Location) SetConfiguration(ctx context.Context, exec boil.ContextExecut
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+		"UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 		strmangle.WhereClause("\"", "\"", 2, locationPrimaryKeyColumns),
 	)
@@ -964,7 +964,7 @@ func (o *Location) SetParent(ctx context.Context, exec boil.ContextExecutor, ins
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+		"UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"parent_id"}),
 		strmangle.WhereClause("\"", "\"", 2, locationPrimaryKeyColumns),
 	)
@@ -1022,7 +1022,7 @@ func (o *Location) AddParentLocations(ctx context.Context, exec boil.ContextExec
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+				"UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"parent_id"}),
 				strmangle.WhereClause("\"", "\"", 2, locationPrimaryKeyColumns),
 			)
@@ -1063,10 +1063,10 @@ func (o *Location) AddParentLocations(ctx context.Context, exec boil.ContextExec
 
 // Locations retrieves all the records using an executor.
 func Locations(mods ...qm.QueryMod) locationQuery {
-	mods = append(mods, qm.From("\"kontaktio\".\"location\""))
+	mods = append(mods, qm.From("\"kontakt_io\".\"location\""))
 	q := NewQuery(mods...)
 	if len(queries.GetSelect(q)) == 0 {
-		queries.SetSelect(q, []string{"\"kontaktio\".\"location\".*"})
+		queries.SetSelect(q, []string{"\"kontakt_io\".\"location\".*"})
 	}
 
 	return locationQuery{q}
@@ -1087,7 +1087,7 @@ func FindLocation(ctx context.Context, exec boil.ContextExecutor, iD int64, sele
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"kontaktio\".\"location\" where \"id\"=$1", sel,
+		"select %s from \"kontakt_io\".\"location\" where \"id\"=$1", sel,
 	)
 
 	q := queries.Raw(query, iD)
@@ -1149,9 +1149,9 @@ func (o *Location) Insert(ctx context.Context, exec boil.ContextExecutor, column
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO \"kontaktio\".\"location\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO \"kontakt_io\".\"location\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO \"kontaktio\".\"location\" %sDEFAULT VALUES%s"
+			cache.query = "INSERT INTO \"kontakt_io\".\"location\" %sDEFAULT VALUES%s"
 		}
 
 		var queryOutput, queryReturning string
@@ -1223,7 +1223,7 @@ func (o *Location) Update(ctx context.Context, exec boil.ContextExecutor, column
 			return 0, errors.New("appdb: unable to update location, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+		cache.query = fmt.Sprintf("UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 			strmangle.SetParamNames("\"", "\"", 1, wl),
 			strmangle.WhereClause("\"", "\"", len(wl)+1, locationPrimaryKeyColumns),
 		)
@@ -1314,7 +1314,7 @@ func (o LocationSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+	sql := fmt.Sprintf("UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, colNames),
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, locationPrimaryKeyColumns, len(o)))
 
@@ -1409,7 +1409,7 @@ func (o *Location) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 			conflict = make([]string, len(locationPrimaryKeyColumns))
 			copy(conflict, locationPrimaryKeyColumns)
 		}
-		cache.query = buildUpsertQueryPostgres(dialect, "\"kontaktio\".\"location\"", updateOnConflict, ret, update, conflict, insert)
+		cache.query = buildUpsertQueryPostgres(dialect, "\"kontakt_io\".\"location\"", updateOnConflict, ret, update, conflict, insert)
 
 		cache.valueMapping, err = queries.BindMapping(locationType, locationMapping, insert)
 		if err != nil {
@@ -1474,7 +1474,7 @@ func (o *Location) Delete(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), locationPrimaryKeyMapping)
-	sql := "DELETE FROM \"kontaktio\".\"location\" WHERE \"id\"=$1"
+	sql := "DELETE FROM \"kontakt_io\".\"location\" WHERE \"id\"=$1"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1548,7 +1548,7 @@ func (o LocationSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM \"kontaktio\".\"location\" WHERE " +
+	sql := "DELETE FROM \"kontakt_io\".\"location\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, locationPrimaryKeyColumns, len(o))
 
 	if boil.IsDebug(ctx) {
@@ -1622,7 +1622,7 @@ func (o *LocationSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT \"kontaktio\".\"location\".* FROM \"kontaktio\".\"location\" WHERE " +
+	sql := "SELECT \"kontakt_io\".\"location\".* FROM \"kontakt_io\".\"location\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, locationPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
@@ -1645,7 +1645,7 @@ func LocationExistsG(ctx context.Context, iD int64) (bool, error) {
 // LocationExists checks if the Location row exists.
 func LocationExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"kontaktio\".\"location\" where \"id\"=$1 limit 1)"
+	sql := "select exists(select 1 from \"kontakt_io\".\"location\" where \"id\"=$1 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)

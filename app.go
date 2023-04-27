@@ -21,7 +21,7 @@ import (
 	"kontakt-io/apiservices"
 	"kontakt-io/conf"
 	"kontakt-io/eliona"
-	kontaktio "kontakt-io/kontakt.io"
+	kontaktio "kontakt-io/kontakt-io"
 	"net/http"
 	"time"
 
@@ -91,7 +91,7 @@ func collectData() {
 func initLocations(config apiserver.Configuration) error {
 	rooms, err := kontaktio.GetRooms(config)
 	if err != nil {
-		log.Error("kontaktio", "getting rooms: %v", err)
+		log.Error("kontakt-io", "getting rooms: %v", err)
 		return err
 	}
 	if err := eliona.CreateLocationAssetsIfNecessary(config, rooms); err != nil {
@@ -104,7 +104,7 @@ func initLocations(config apiserver.Configuration) error {
 func collectDataForConfig(config apiserver.Configuration) error {
 	tags, err := kontaktio.GetTags(config)
 	if err != nil {
-		log.Error("kontaktio", "getting tags info: %v", err)
+		log.Error("kontakt-io", "getting tags info: %v", err)
 		return err
 	}
 	if err := eliona.CreateTagAssetsIfNecessary(config, tags); err != nil {

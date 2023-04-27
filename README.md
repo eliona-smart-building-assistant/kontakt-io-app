@@ -1,6 +1,6 @@
 # Eliona app to access Kontakt.io devices
 
-This [Eliona app for Kontakt.io](https://github.com/eliona-smart-building-assistant/kontakt.io-app) connects the [Kontakt.io devices](https://kontakt.io/) to an [Eliona](https://www.eliona.io/) environment.
+This [Eliona app for Kontakt.io](https://github.com/eliona-smart-building-assistant/kontakt-io-app) connects the [Kontakt.io devices](https://kontakt.io/) to an [Eliona](https://www.eliona.io/) environment.
 
 ## Configuration
 
@@ -14,7 +14,7 @@ The registration could be done using the reset script.
 
 ### Environment variables
 
-- `APPNAME`: must be set to `kontaktio`. Some resources use this name to identify the app inside an Eliona environment.
+- `APPNAME`: must be set to `kontakt-io`. Some resources use this name to identify the app inside an Eliona environment.
 
 - `CONNECTION_STRING`: configures the [Eliona database](https://github.com/eliona-smart-building-assistant/go-utils/tree/main/db). (e.g. `postgres://user:pass@localhost:5432/iot`)
 

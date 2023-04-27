@@ -23,7 +23,7 @@ externalDocs:
   description: Find out more about the Kontakt.io App
   url: https://github.com/eliona-smart-building-assistant/kontakt.io-app/
 servers:
-  - url: http://kontaktio/v1
+  - url: http://kontakt-io/v1
 
 tags:
   - name: Configuration

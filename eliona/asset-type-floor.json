@@ -33,7 +33,7 @@
 	],
 	"custom": true,
 	"icon": "storey",
-	"name": "kontaktio_floor",
+	"name": "kontakt_io_floor",
 	"translation": {
 		"de": "Kontakt.io Stock",
 		"en": "Kontakt.io Floor"

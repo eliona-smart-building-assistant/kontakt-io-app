@@ -16,7 +16,6 @@
 package kontaktio
 
 import (
-	"context"
 	"fmt"
 	"kontakt-io/apiserver"
 	"reflect"
