@@ -15,7 +15,14 @@
 
 package kontaktio
 
-import "kontakt-io/apiserver"
+import (
+	"context"
+	"fmt"
+	"kontakt-io/apiserver"
+	"reflect"
+
+	"github.com/eliona-smart-building-assistant/go-utils/common"
+)
 
 type Building struct {
 	ID   int    `json:"id"`
@@ -56,4 +63,58 @@ type Tag struct {
 
 func GetTags(config apiserver.Configuration) ([]Tag, error) {
 	return nil, nil
+}
+
+func (tag *Tag) AdheresToFilter(config apiserver.Configuration) (bool, error) {
+	f := apiFilterToCommonFilter(config.AssetFilter)
+	fp, err := structToMap(tag)
+	if err != nil {
+		return false, fmt.Errorf("converting strict to map: %v", err)
+	}
+	adheres, err := common.Filter(f, fp)
+	if err != nil {
+		return false, err
+	}
+	return adheres, nil
+}
+
+func structToMap(input interface{}) (map[string]string, error) {
+	if input == nil {
+		return nil, fmt.Errorf("input is nil")
+	}
+
+	inputValue := reflect.ValueOf(input)
+	inputType := reflect.TypeOf(input)
+
+	if inputValue.Kind() == reflect.Ptr {
+		inputValue = inputValue.Elem()
+		inputType = inputType.Elem()
+	}
+
+	if inputValue.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("input is not a struct")
+	}
+
+	output := make(map[string]string)
+	for i := 0; i < inputValue.NumField(); i++ {
+		fieldValue := inputValue.Field(i)
+		fieldType := inputType.Field(i)
+		output[fieldType.Name] = fieldValue.String()
+	}
+
+	return output, nil
+}
+
+func apiFilterToCommonFilter(input [][]apiserver.FilterRule) [][]common.FilterRule {
+	result := make([][]common.FilterRule, len(input))
+	for i := 0; i < len(input); i++ {
+		result[i] = make([]common.FilterRule, len(input[i]))
+		for j := 0; j < len(input[i]); j++ {
+			result[i][j] = common.FilterRule{
+				Parameter: input[i][j].Parameter,
+				Regex:     input[i][j].Regex,
+			}
+		}
+	}
+	return result
 }
