@@ -13,10 +13,10 @@
 --  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-create schema if not exists kontaktio;
+create schema if not exists kontakt_io;
 
 -- Should be editable by eliona frontend.
-create table if not exists kontaktio.configuration
+create table if not exists kontakt_io.configuration
 (
 	id               bigserial primary key,
 	api_address      text,
@@ -33,11 +33,11 @@ create table if not exists kontaktio.configuration
 
 -- Location corresponds to one asset in Eliona
 -- Should be read-only by eliona frontend.
-create table if not exists kontaktio.location
+create table if not exists kontakt_io.location
 (
 	id               bigserial primary key,
-	parent_id        bigserial references kontaktio.location(id),
-	configuration_id bigserial not null references kontaktio.configuration(id),
+	parent_id        bigserial references kontakt_io.location(id),
+	configuration_id bigserial not null references kontakt_io.configuration(id),
 	project_id       text      not null,
 	serial_number    integer   not null,
 	asset_id         integer
@@ -45,9 +45,9 @@ create table if not exists kontaktio.location
 
 -- Tag corresponds to one asset in Eliona
 -- Should be read-only by eliona frontend.
-create table if not exists kontaktio.tag
+create table if not exists kontakt_io.tag
 (
-	configuration_id bigserial references kontaktio.configuration(id),
+	configuration_id bigserial references kontakt_io.configuration(id),
 	project_id       text      not null,
 	serial_number    text      not null,
 	asset_id         integer,

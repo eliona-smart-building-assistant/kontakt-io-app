@@ -43,7 +43,7 @@
 	],
 	"custom": true,
 	"icon": "building",
-	"name": "kontaktio_building",
+	"name": "kontakt_io_building",
 	"translation": {
 		"de": "Kontakt.io Building",
 		"en": "Kontakt.io Building"

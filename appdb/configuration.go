@@ -266,17 +266,17 @@ var ConfigurationWhere = struct {
 	Enable          whereHelpernull_Bool
 	ProjectIds      whereHelpertypes_StringArray
 }{
-	ID:              whereHelperint64{field: "\"kontaktio\".\"configuration\".\"id\""},
-	APIAddress:      whereHelpernull_String{field: "\"kontaktio\".\"configuration\".\"api_address\""},
-	APIKey:          whereHelpernull_String{field: "\"kontaktio\".\"configuration\".\"api_key\""},
-	AbsoluteX:       whereHelperint32{field: "\"kontaktio\".\"configuration\".\"absolute_x\""},
-	AbsoluteY:       whereHelperint32{field: "\"kontaktio\".\"configuration\".\"absolute_y\""},
-	RefreshInterval: whereHelperint32{field: "\"kontaktio\".\"configuration\".\"refresh_interval\""},
-	RequestTimeout:  whereHelperint32{field: "\"kontaktio\".\"configuration\".\"request_timeout\""},
-	AssetFilter:     whereHelpernull_JSON{field: "\"kontaktio\".\"configuration\".\"asset_filter\""},
-	Active:          whereHelpernull_Bool{field: "\"kontaktio\".\"configuration\".\"active\""},
-	Enable:          whereHelpernull_Bool{field: "\"kontaktio\".\"configuration\".\"enable\""},
-	ProjectIds:      whereHelpertypes_StringArray{field: "\"kontaktio\".\"configuration\".\"project_ids\""},
+	ID:              whereHelperint64{field: "\"kontakt_io\".\"configuration\".\"id\""},
+	APIAddress:      whereHelpernull_String{field: "\"kontakt_io\".\"configuration\".\"api_address\""},
+	APIKey:          whereHelpernull_String{field: "\"kontakt_io\".\"configuration\".\"api_key\""},
+	AbsoluteX:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_x\""},
+	AbsoluteY:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_y\""},
+	RefreshInterval: whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"refresh_interval\""},
+	RequestTimeout:  whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"request_timeout\""},
+	AssetFilter:     whereHelpernull_JSON{field: "\"kontakt_io\".\"configuration\".\"asset_filter\""},
+	Active:          whereHelpernull_Bool{field: "\"kontakt_io\".\"configuration\".\"active\""},
+	Enable:          whereHelpernull_Bool{field: "\"kontakt_io\".\"configuration\".\"enable\""},
+	ProjectIds:      whereHelpertypes_StringArray{field: "\"kontakt_io\".\"configuration\".\"project_ids\""},
 }
 
 // ConfigurationRels is where relationship names are stored.
@@ -630,7 +630,7 @@ func (o *Configuration) Locations(mods ...qm.QueryMod) locationQuery {
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"kontaktio\".\"location\".\"configuration_id\"=?", o.ID),
+		qm.Where("\"kontakt_io\".\"location\".\"configuration_id\"=?", o.ID),
 	)
 
 	return Locations(queryMods...)
@@ -644,7 +644,7 @@ func (o *Configuration) Tags(mods ...qm.QueryMod) tagQuery {
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"kontaktio\".\"tag\".\"configuration_id\"=?", o.ID),
+		qm.Where("\"kontakt_io\".\"tag\".\"configuration_id\"=?", o.ID),
 	)
 
 	return Tags(queryMods...)
@@ -706,8 +706,8 @@ func (configurationL) LoadLocations(ctx context.Context, e boil.ContextExecutor,
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.location`),
-		qm.WhereIn(`kontaktio.location.configuration_id in ?`, args...),
+		qm.From(`kontakt_io.location`),
+		qm.WhereIn(`kontakt_io.location.configuration_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -820,8 +820,8 @@ func (configurationL) LoadTags(ctx context.Context, e boil.ContextExecutor, sing
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.tag`),
-		qm.WhereIn(`kontaktio.tag.configuration_id in ?`, args...),
+		qm.From(`kontakt_io.tag`),
+		qm.WhereIn(`kontakt_io.tag.configuration_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -901,7 +901,7 @@ func (o *Configuration) AddLocations(ctx context.Context, exec boil.ContextExecu
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"kontaktio\".\"location\" SET %s WHERE %s",
+				"UPDATE \"kontakt_io\".\"location\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 				strmangle.WhereClause("\"", "\"", 2, locationPrimaryKeyColumns),
 			)
@@ -963,7 +963,7 @@ func (o *Configuration) AddTags(ctx context.Context, exec boil.ContextExecutor, 
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"kontaktio\".\"tag\" SET %s WHERE %s",
+				"UPDATE \"kontakt_io\".\"tag\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 				strmangle.WhereClause("\"", "\"", 2, tagPrimaryKeyColumns),
 			)
@@ -1004,10 +1004,10 @@ func (o *Configuration) AddTags(ctx context.Context, exec boil.ContextExecutor, 
 
 // Configurations retrieves all the records using an executor.
 func Configurations(mods ...qm.QueryMod) configurationQuery {
-	mods = append(mods, qm.From("\"kontaktio\".\"configuration\""))
+	mods = append(mods, qm.From("\"kontakt_io\".\"configuration\""))
 	q := NewQuery(mods...)
 	if len(queries.GetSelect(q)) == 0 {
-		queries.SetSelect(q, []string{"\"kontaktio\".\"configuration\".*"})
+		queries.SetSelect(q, []string{"\"kontakt_io\".\"configuration\".*"})
 	}
 
 	return configurationQuery{q}
@@ -1028,7 +1028,7 @@ func FindConfiguration(ctx context.Context, exec boil.ContextExecutor, iD int64,
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"kontaktio\".\"configuration\" where \"id\"=$1", sel,
+		"select %s from \"kontakt_io\".\"configuration\" where \"id\"=$1", sel,
 	)
 
 	q := queries.Raw(query, iD)
@@ -1090,9 +1090,9 @@ func (o *Configuration) Insert(ctx context.Context, exec boil.ContextExecutor, c
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO \"kontaktio\".\"configuration\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO \"kontakt_io\".\"configuration\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO \"kontaktio\".\"configuration\" %sDEFAULT VALUES%s"
+			cache.query = "INSERT INTO \"kontakt_io\".\"configuration\" %sDEFAULT VALUES%s"
 		}
 
 		var queryOutput, queryReturning string
@@ -1164,7 +1164,7 @@ func (o *Configuration) Update(ctx context.Context, exec boil.ContextExecutor, c
 			return 0, errors.New("appdb: unable to update configuration, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE \"kontaktio\".\"configuration\" SET %s WHERE %s",
+		cache.query = fmt.Sprintf("UPDATE \"kontakt_io\".\"configuration\" SET %s WHERE %s",
 			strmangle.SetParamNames("\"", "\"", 1, wl),
 			strmangle.WhereClause("\"", "\"", len(wl)+1, configurationPrimaryKeyColumns),
 		)
@@ -1255,7 +1255,7 @@ func (o ConfigurationSlice) UpdateAll(ctx context.Context, exec boil.ContextExec
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE \"kontaktio\".\"configuration\" SET %s WHERE %s",
+	sql := fmt.Sprintf("UPDATE \"kontakt_io\".\"configuration\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, colNames),
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, configurationPrimaryKeyColumns, len(o)))
 
@@ -1350,7 +1350,7 @@ func (o *Configuration) Upsert(ctx context.Context, exec boil.ContextExecutor, u
 			conflict = make([]string, len(configurationPrimaryKeyColumns))
 			copy(conflict, configurationPrimaryKeyColumns)
 		}
-		cache.query = buildUpsertQueryPostgres(dialect, "\"kontaktio\".\"configuration\"", updateOnConflict, ret, update, conflict, insert)
+		cache.query = buildUpsertQueryPostgres(dialect, "\"kontakt_io\".\"configuration\"", updateOnConflict, ret, update, conflict, insert)
 
 		cache.valueMapping, err = queries.BindMapping(configurationType, configurationMapping, insert)
 		if err != nil {
@@ -1415,7 +1415,7 @@ func (o *Configuration) Delete(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), configurationPrimaryKeyMapping)
-	sql := "DELETE FROM \"kontaktio\".\"configuration\" WHERE \"id\"=$1"
+	sql := "DELETE FROM \"kontakt_io\".\"configuration\" WHERE \"id\"=$1"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1489,7 +1489,7 @@ func (o ConfigurationSlice) DeleteAll(ctx context.Context, exec boil.ContextExec
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM \"kontaktio\".\"configuration\" WHERE " +
+	sql := "DELETE FROM \"kontakt_io\".\"configuration\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, configurationPrimaryKeyColumns, len(o))
 
 	if boil.IsDebug(ctx) {
@@ -1563,7 +1563,7 @@ func (o *ConfigurationSlice) ReloadAll(ctx context.Context, exec boil.ContextExe
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT \"kontaktio\".\"configuration\".* FROM \"kontaktio\".\"configuration\" WHERE " +
+	sql := "SELECT \"kontakt_io\".\"configuration\".* FROM \"kontakt_io\".\"configuration\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, configurationPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
@@ -1586,7 +1586,7 @@ func ConfigurationExistsG(ctx context.Context, iD int64) (bool, error) {
 // ConfigurationExists checks if the Configuration row exists.
 func ConfigurationExists(ctx context.Context, exec boil.ContextExecutor, iD int64) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"kontaktio\".\"configuration\" where \"id\"=$1 limit 1)"
+	sql := "select exists(select 1 from \"kontakt_io\".\"configuration\" where \"id\"=$1 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)

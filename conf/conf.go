@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"kontakt-io/apiserver"
 	"kontakt-io/appdb"
-	kontaktio "kontakt-io/kontakt.io"
 	"strconv"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
@@ -197,5 +196,3 @@ func SetAllConfigsInactive(ctx context.Context) (int64, error) {
 		appdb.ConfigurationColumns.Active: false,
 	})
 }
-
-

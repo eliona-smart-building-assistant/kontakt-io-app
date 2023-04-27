@@ -18,30 +18,30 @@
 -- registration (which you can optionally remove as well by uncommenting the last command).
 
 INSERT INTO public.eliona_store (app_name, category, version)
-VALUES ('kontaktio', 'app', '1.0.0')
+VALUES ('kontakt-io', 'app', '1.0.0')
 ON CONFLICT (app_name) DO UPDATE SET version = '1.0.0';
 
 INSERT INTO public.eliona_app (app_name, enable)
-VALUES ('kontaktio', 't')
+VALUES ('kontakt-io', 't')
 ON CONFLICT (app_name) DO UPDATE SET initialized_at = null;
 
-DROP SCHEMA IF EXISTS kontaktio CASCADE;
+DROP SCHEMA IF EXISTS kontakt_io CASCADE;
 
 DELETE FROM heap
 WHERE asset_id IN (
 	SELECT asset_id
 	FROM asset
-	WHERE asset_type LIKE E'kontaktio\\_%'
+	WHERE asset_type LIKE E'kontakt_io\\_%'
 );
 
 DELETE FROM attribute_schema
-WHERE asset_type LIKE E'kontaktio\\_%';
+WHERE asset_type LIKE E'kontakt_io\\_%';
 
 DELETE FROM asset
-WHERE asset_type LIKE E'kontaktio\\_%';
+WHERE asset_type LIKE E'kontakt_io\\_%';
 
 DELETE FROM asset_type
-WHERE asset_type LIKE E'kontaktio\\_%';
+WHERE asset_type LIKE E'kontakt_io\\_%';
 
 DELETE FROM public.widget_data
 WHERE widget_id IN (
@@ -61,4 +61,4 @@ WHERE dashboard_id IN (
 DELETE FROM public.dashboard
 WHERE name LIKE 'Kontakt.io%'
 
--- DELETE FROM eliona_app WHERE app_name = 'kontaktio';
+-- DELETE FROM eliona_app WHERE app_name = 'kontakt-io';

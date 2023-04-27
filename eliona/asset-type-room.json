@@ -23,7 +23,7 @@
 	],
 	"custom": true,
 	"icon": "closable",
-	"name": "kontaktio_room",
+	"name": "kontakt_io_room",
 	"translation": {
 		"de": "Kontakt.io Raum",
 		"en": "Kontakt.io Room"

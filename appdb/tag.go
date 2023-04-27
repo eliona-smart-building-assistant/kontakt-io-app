@@ -65,10 +65,10 @@ var TagWhere = struct {
 	SerialNumber    whereHelperstring
 	AssetID         whereHelpernull_Int32
 }{
-	ConfigurationID: whereHelperint64{field: "\"kontaktio\".\"tag\".\"configuration_id\""},
-	ProjectID:       whereHelperstring{field: "\"kontaktio\".\"tag\".\"project_id\""},
-	SerialNumber:    whereHelperstring{field: "\"kontaktio\".\"tag\".\"serial_number\""},
-	AssetID:         whereHelpernull_Int32{field: "\"kontaktio\".\"tag\".\"asset_id\""},
+	ConfigurationID: whereHelperint64{field: "\"kontakt_io\".\"tag\".\"configuration_id\""},
+	ProjectID:       whereHelperstring{field: "\"kontakt_io\".\"tag\".\"project_id\""},
+	SerialNumber:    whereHelperstring{field: "\"kontakt_io\".\"tag\".\"serial_number\""},
+	AssetID:         whereHelpernull_Int32{field: "\"kontakt_io\".\"tag\".\"asset_id\""},
 }
 
 // TagRels is where relationship names are stored.
@@ -473,8 +473,8 @@ func (tagL) LoadConfiguration(ctx context.Context, e boil.ContextExecutor, singu
 	}
 
 	query := NewQuery(
-		qm.From(`kontaktio.configuration`),
-		qm.WhereIn(`kontaktio.configuration.id in ?`, args...),
+		qm.From(`kontakt_io.configuration`),
+		qm.WhereIn(`kontakt_io.configuration.id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -555,7 +555,7 @@ func (o *Tag) SetConfiguration(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"kontaktio\".\"tag\" SET %s WHERE %s",
+		"UPDATE \"kontakt_io\".\"tag\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 		strmangle.WhereClause("\"", "\"", 2, tagPrimaryKeyColumns),
 	)
@@ -592,10 +592,10 @@ func (o *Tag) SetConfiguration(ctx context.Context, exec boil.ContextExecutor, i
 
 // Tags retrieves all the records using an executor.
 func Tags(mods ...qm.QueryMod) tagQuery {
-	mods = append(mods, qm.From("\"kontaktio\".\"tag\""))
+	mods = append(mods, qm.From("\"kontakt_io\".\"tag\""))
 	q := NewQuery(mods...)
 	if len(queries.GetSelect(q)) == 0 {
-		queries.SetSelect(q, []string{"\"kontaktio\".\"tag\".*"})
+		queries.SetSelect(q, []string{"\"kontakt_io\".\"tag\".*"})
 	}
 
 	return tagQuery{q}
@@ -616,7 +616,7 @@ func FindTag(ctx context.Context, exec boil.ContextExecutor, configurationID int
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"kontaktio\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3", sel,
+		"select %s from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3", sel,
 	)
 
 	q := queries.Raw(query, configurationID, projectID, serialNumber)
@@ -678,9 +678,9 @@ func (o *Tag) Insert(ctx context.Context, exec boil.ContextExecutor, columns boi
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO \"kontaktio\".\"tag\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO \"kontakt_io\".\"tag\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO \"kontaktio\".\"tag\" %sDEFAULT VALUES%s"
+			cache.query = "INSERT INTO \"kontakt_io\".\"tag\" %sDEFAULT VALUES%s"
 		}
 
 		var queryOutput, queryReturning string
@@ -752,7 +752,7 @@ func (o *Tag) Update(ctx context.Context, exec boil.ContextExecutor, columns boi
 			return 0, errors.New("appdb: unable to update tag, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE \"kontaktio\".\"tag\" SET %s WHERE %s",
+		cache.query = fmt.Sprintf("UPDATE \"kontakt_io\".\"tag\" SET %s WHERE %s",
 			strmangle.SetParamNames("\"", "\"", 1, wl),
 			strmangle.WhereClause("\"", "\"", len(wl)+1, tagPrimaryKeyColumns),
 		)
@@ -843,7 +843,7 @@ func (o TagSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE \"kontaktio\".\"tag\" SET %s WHERE %s",
+	sql := fmt.Sprintf("UPDATE \"kontakt_io\".\"tag\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, colNames),
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, tagPrimaryKeyColumns, len(o)))
 
@@ -938,7 +938,7 @@ func (o *Tag) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCon
 			conflict = make([]string, len(tagPrimaryKeyColumns))
 			copy(conflict, tagPrimaryKeyColumns)
 		}
-		cache.query = buildUpsertQueryPostgres(dialect, "\"kontaktio\".\"tag\"", updateOnConflict, ret, update, conflict, insert)
+		cache.query = buildUpsertQueryPostgres(dialect, "\"kontakt_io\".\"tag\"", updateOnConflict, ret, update, conflict, insert)
 
 		cache.valueMapping, err = queries.BindMapping(tagType, tagMapping, insert)
 		if err != nil {
@@ -1003,7 +1003,7 @@ func (o *Tag) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, err
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), tagPrimaryKeyMapping)
-	sql := "DELETE FROM \"kontaktio\".\"tag\" WHERE \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3"
+	sql := "DELETE FROM \"kontakt_io\".\"tag\" WHERE \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1077,7 +1077,7 @@ func (o TagSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM \"kontaktio\".\"tag\" WHERE " +
+	sql := "DELETE FROM \"kontakt_io\".\"tag\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, tagPrimaryKeyColumns, len(o))
 
 	if boil.IsDebug(ctx) {
@@ -1151,7 +1151,7 @@ func (o *TagSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) err
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT \"kontaktio\".\"tag\".* FROM \"kontaktio\".\"tag\" WHERE " +
+	sql := "SELECT \"kontakt_io\".\"tag\".* FROM \"kontakt_io\".\"tag\" WHERE " +
 		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, tagPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
@@ -1174,7 +1174,7 @@ func TagExistsG(ctx context.Context, configurationID int64, projectID string, se
 // TagExists checks if the Tag row exists.
 func TagExists(ctx context.Context, exec boil.ContextExecutor, configurationID int64, projectID string, serialNumber string) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"kontaktio\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3 limit 1)"
+	sql := "select exists(select 1 from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
-	kontaktio "kontakt-io/kontakt.io"
+	kontaktio "kontakt-io/kontakt-io"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
 	"github.com/eliona-smart-building-assistant/go-eliona/asset"
@@ -48,15 +48,15 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), nil, "kontaktio_building", room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), nil, "kontakt_io_building", room.Floor.Building.Name)
 			if err != nil {
 				return err
 			}
-			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, "kontaktio_floor", room.Floor.Name)
+			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, "kontakt_io_floor", room.Floor.Name)
 			if err != nil {
 				return err
 			}
-			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, "kontaktio_room", room.Name); err != nil {
+			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, "kontakt_io_room", room.Name); err != nil {
 				return err
 			}
 		}
@@ -73,7 +73,7 @@ func CreateTagAssetsIfNecessary(config apiserver.Configuration, tags []kontaktio
 			continue
 		}
 		for _, projectId := range conf.ProjIds(config) {
-			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, "kontaktio_tag", tag.Name)
+			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, "kontakt_io_tag", tag.Name)
 			if err != nil {
 				return err
 			}

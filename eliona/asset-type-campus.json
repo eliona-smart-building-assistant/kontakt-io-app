@@ -43,7 +43,7 @@
 	],
 	"custom": true,
 	"icon": "building",
-	"name": "kontaktio_campus",
+	"name": "kontakt_io_campus",
 	"translation": {
 		"de": "Kontakt.io Campus",
 		"en": "Kontakt.io Campus"

@@ -33,7 +33,7 @@ COPY --from=build /app ./
 COPY conf/*.sql ./conf/
 COPY apiserver/openapi.json /
 
-ENV APPNAME=kontaktio
+ENV APPNAME=kontakt-io
 
 ENV TZ=Europe/Zurich
 CMD [ "/app" ]
