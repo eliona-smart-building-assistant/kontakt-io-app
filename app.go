@@ -16,20 +16,102 @@
 package main
 
 import (
+	"context"
 	"kontakt-io/apiserver"
 	"kontakt-io/apiservices"
+	"kontakt-io/conf"
+	"kontakt-io/eliona"
+	kontaktio "kontakt-io/kontakt.io"
 	"net/http"
+	"time"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
-// doAnything is the main app function which is called periodically
-func doAnything() {
+// collectData is the main app function which is called periodically
+func collectData() {
+	configs, err := conf.GetConfigs(context.Background())
+	if err != nil {
+		log.Fatal("conf", "Couldn't read configs from DB: %v", err)
+		return
+	}
+	if len(configs) == 0 {
+		log.Info("conf", "No configs in DB")
+		return
+	}
 
-	// Todo: implement everything the app should do
-	log.Debug("main", "do anything")
+	for _, config := range configs {
+		// Skip config if disabled and set inactive
+		if !conf.IsConfigEnabled(config) {
+			if conf.IsConfigActive(config) {
+				conf.SetConfigActiveState(context.Background(), config, false)
+			}
+			continue
+		}
 
+		// Signals that this config is active
+		if !conf.IsConfigActive(config) {
+			conf.SetConfigActiveState(context.Background(), config, true)
+			log.Info("conf", "Collecting initialized with Configuration %d:\n"+
+				"API Address: %s\n"+
+				"API Key: %s\n"+
+				"Enable: %t\n"+
+				"Refresh Interval: %d\n"+
+				"Request Timeout: %d\n"+
+				"Active: %t\n"+
+				"Project IDs: %v\n",
+				*config.Id,
+				config.ApiAddress,
+				config.ApiKey,
+				*config.Enable,
+				config.RefreshInterval,
+				*config.RequestTimeout,
+				*config.Active,
+				*config.ProjectIDs)
+		}
+
+		common.RunOnceWithParam(func(config apiserver.Configuration) {
+			log.Info("main", "Collecting %d started", *config.Id)
+
+			if err := initLocations(config); err != nil {
+				return // Error is handled in the method itself.
+			}
+			if err := collectDataForConfig(config); err != nil {
+				return // Error is handled in the method itself.
+			}
+
+			log.Info("main", "Collecting %d finished", *config.Id)
+
+			time.Sleep(time.Second * time.Duration(config.RefreshInterval))
+		}, config, *config.Id)
+	}
+}
+
+func initLocations(config apiserver.Configuration) error {
+	rooms, err := kontaktio.GetRooms(config)
+	if err != nil {
+		log.Error("kontaktio", "getting rooms: %v", err)
+		return err
+	}
+	if err := eliona.CreateLocationAssetsIfNecessary(config, rooms); err != nil {
+		log.Error("eliona", "creating location assets: %v", err)
+		return err
+	}
+	return nil
+}
+
+func collectDataForConfig(config apiserver.Configuration) error {
+	tags, err := kontaktio.GetTags(config)
+	if err != nil {
+		log.Error("kontaktio", "getting tags info: %v", err)
+		return err
+	}
+	if err := eliona.CreateTagAssetsIfNecessary(config, tags); err != nil {
+		log.Error("eliona", "creating tag assets: %v", err)
+		return err
+	}
+	return nil
 }
 
 // listenApi starts the API server and listen for requests
