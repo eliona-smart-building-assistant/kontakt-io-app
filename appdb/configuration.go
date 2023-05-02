@@ -26,7 +26,6 @@ import (
 // Configuration is an object representing the database table.
 type Configuration struct {
 	ID              int64             `boil:"id" json:"id" toml:"id" yaml:"id"`
-	APIAddress      null.String       `boil:"api_address" json:"api_address,omitempty" toml:"api_address" yaml:"api_address,omitempty"`
 	APIKey          null.String       `boil:"api_key" json:"api_key,omitempty" toml:"api_key" yaml:"api_key,omitempty"`
 	AbsoluteX       int32             `boil:"absolute_x" json:"absolute_x" toml:"absolute_x" yaml:"absolute_x"`
 	AbsoluteY       int32             `boil:"absolute_y" json:"absolute_y" toml:"absolute_y" yaml:"absolute_y"`
@@ -43,7 +42,6 @@ type Configuration struct {
 
 var ConfigurationColumns = struct {
 	ID              string
-	APIAddress      string
 	APIKey          string
 	AbsoluteX       string
 	AbsoluteY       string
@@ -55,7 +53,6 @@ var ConfigurationColumns = struct {
 	ProjectIds      string
 }{
 	ID:              "id",
-	APIAddress:      "api_address",
 	APIKey:          "api_key",
 	AbsoluteX:       "absolute_x",
 	AbsoluteY:       "absolute_y",
@@ -69,7 +66,6 @@ var ConfigurationColumns = struct {
 
 var ConfigurationTableColumns = struct {
 	ID              string
-	APIAddress      string
 	APIKey          string
 	AbsoluteX       string
 	AbsoluteY       string
@@ -81,7 +77,6 @@ var ConfigurationTableColumns = struct {
 	ProjectIds      string
 }{
 	ID:              "configuration.id",
-	APIAddress:      "configuration.api_address",
 	APIKey:          "configuration.api_key",
 	AbsoluteX:       "configuration.absolute_x",
 	AbsoluteY:       "configuration.absolute_y",
@@ -255,7 +250,6 @@ func (w whereHelpertypes_StringArray) IsNotNull() qm.QueryMod {
 
 var ConfigurationWhere = struct {
 	ID              whereHelperint64
-	APIAddress      whereHelpernull_String
 	APIKey          whereHelpernull_String
 	AbsoluteX       whereHelperint32
 	AbsoluteY       whereHelperint32
@@ -267,7 +261,6 @@ var ConfigurationWhere = struct {
 	ProjectIds      whereHelpertypes_StringArray
 }{
 	ID:              whereHelperint64{field: "\"kontakt_io\".\"configuration\".\"id\""},
-	APIAddress:      whereHelpernull_String{field: "\"kontakt_io\".\"configuration\".\"api_address\""},
 	APIKey:          whereHelpernull_String{field: "\"kontakt_io\".\"configuration\".\"api_key\""},
 	AbsoluteX:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_x\""},
 	AbsoluteY:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_y\""},
@@ -317,9 +310,9 @@ func (r *configurationR) GetTags() TagSlice {
 type configurationL struct{}
 
 var (
-	configurationAllColumns            = []string{"id", "api_address", "api_key", "absolute_x", "absolute_y", "refresh_interval", "request_timeout", "asset_filter", "active", "enable", "project_ids"}
+	configurationAllColumns            = []string{"id", "api_key", "absolute_x", "absolute_y", "refresh_interval", "request_timeout", "asset_filter", "active", "enable", "project_ids"}
 	configurationColumnsWithoutDefault = []string{}
-	configurationColumnsWithDefault    = []string{"id", "api_address", "api_key", "absolute_x", "absolute_y", "refresh_interval", "request_timeout", "asset_filter", "active", "enable", "project_ids"}
+	configurationColumnsWithDefault    = []string{"id", "api_key", "absolute_x", "absolute_y", "refresh_interval", "request_timeout", "asset_filter", "active", "enable", "project_ids"}
 	configurationPrimaryKeyColumns     = []string{"id"}
 	configurationGeneratedColumns      = []string{}
 )

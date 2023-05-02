@@ -19,7 +19,6 @@ create schema if not exists kontakt_io;
 create table if not exists kontakt_io.configuration
 (
 	id               bigserial primary key,
-	api_address      text,
 	api_key          text,
 	absolute_x       integer not null default 0,
 	absolute_y       integer not null default 0,

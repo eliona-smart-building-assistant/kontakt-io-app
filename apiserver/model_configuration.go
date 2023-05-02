@@ -15,9 +15,6 @@ type Configuration struct {
 	// Internal identifier for the configured API (created automatically).
 	Id *int64 `json:"id,omitempty"`
 
-	// IP or hostname of the API
-	ApiAddress string `json:"apiAddress,omitempty"`
-
 	// API key
 	ApiKey string `json:"apiKey,omitempty"`
 

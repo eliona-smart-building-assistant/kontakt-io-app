@@ -154,11 +154,6 @@ components:
           description: Internal identifier for the configured API (created automatically).
           readOnly: true
           nullable: true
-        apiAddress:
-          type: string
-          format: string
-          description: IP or hostname of the API
-          example: 10.10.10.101
         apiKey:
           type: string
           description: API key
