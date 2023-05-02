@@ -78,7 +78,6 @@ func DeleteConfig(ctx context.Context, configID int64) error {
 
 func dbConfigFromApiConfig(apiConfig apiserver.Configuration) (dbConfig appdb.Configuration, err error) {
 	dbConfig.ID = null.Int64FromPtr(apiConfig.Id).Int64
-	dbConfig.APIAddress = null.StringFrom(apiConfig.ApiAddress)
 	dbConfig.APIKey = null.StringFrom(apiConfig.ApiKey)
 	dbConfig.Enable = null.BoolFromPtr(apiConfig.Enable)
 	dbConfig.RefreshInterval = apiConfig.RefreshInterval
@@ -99,7 +98,6 @@ func dbConfigFromApiConfig(apiConfig apiserver.Configuration) (dbConfig appdb.Co
 
 func apiConfigFromDbConfig(dbConfig *appdb.Configuration) (apiConfig apiserver.Configuration, err error) {
 	apiConfig.Id = &dbConfig.ID
-	apiConfig.ApiAddress = dbConfig.APIAddress.String
 	apiConfig.ApiKey = dbConfig.APIKey.String
 	apiConfig.Enable = dbConfig.Enable.Ptr()
 	apiConfig.RefreshInterval = dbConfig.RefreshInterval

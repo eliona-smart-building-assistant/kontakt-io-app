@@ -54,7 +54,6 @@ func collectData() {
 		if !conf.IsConfigActive(config) {
 			conf.SetConfigActiveState(context.Background(), config, true)
 			log.Info("conf", "Collecting initialized with Configuration %d:\n"+
-				"API Address: %s\n"+
 				"API Key: %s\n"+
 				"Enable: %t\n"+
 				"Refresh Interval: %d\n"+
@@ -62,7 +61,6 @@ func collectData() {
 				"Active: %t\n"+
 				"Project IDs: %v\n",
 				*config.Id,
-				config.ApiAddress,
 				config.ApiKey,
 				*config.Enable,
 				config.RefreshInterval,
