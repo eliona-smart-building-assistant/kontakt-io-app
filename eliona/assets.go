@@ -66,12 +66,6 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 
 func CreateTagAssetsIfNecessary(config apiserver.Configuration, tags []kontaktio.Tag) error {
 	for _, tag := range tags {
-		if adheres, err := tag.AdheresToFilter(config); err != nil {
-			return fmt.Errorf("checking if device adheres to a device filter: %v", err)
-		} else if !adheres {
-			log.Debug("eliona", "Device %v skipped, does not adhere to asset filter.", tag.Name)
-			continue
-		}
 		for _, projectId := range conf.ProjIds(config) {
 			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, "kontakt_io_tag", tag.Name)
 			if err != nil {
