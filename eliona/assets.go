@@ -21,12 +21,15 @@ import (
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	kontaktio "kontakt-io/kontakt-io"
+	"strconv"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
 	"github.com/eliona-smart-building-assistant/go-eliona/asset"
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
+
+const tagAssetType = "kontakt_io_tag"
 
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
 	assetData := assetData{
@@ -67,7 +70,7 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 func CreateTagAssetsIfNecessary(config apiserver.Configuration, tags []kontaktio.Tag) error {
 	for _, tag := range tags {
 		for _, projectId := range conf.ProjIds(config) {
-			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, "kontakt_io_tag", tag.Name)
+			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, tagAssetType, tag.Name)
 			if err != nil {
 				return err
 			}
@@ -89,7 +92,14 @@ type assetData struct {
 
 func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 	// Get known asset id from configuration
-	currentAssetID, err := conf.GetAssetId(context.Background(), d.config, d.projectId, d.identifier)
+	currentAssetID, err := conf.GetTagAssetId(context.Background(), d.config, d.projectId, d.identifier)
+	if d.assetType != tagAssetType {
+		id, errParse := strconv.ParseInt(d.identifier, 10, 32) 
+		if errParse != nil {
+			return false, 0, fmt.Errorf("parsing identifier %s: %v", d.identifier, err)
+		}
+		currentAssetID, err = conf.GetLocationAssetId(context.Background(), d.config, d.projectId, int32(id))
+	}
 	if err != nil {
 		return false, 0, fmt.Errorf("finding asset ID: %v", err)
 	}

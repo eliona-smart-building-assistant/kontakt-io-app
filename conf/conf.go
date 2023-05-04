@@ -31,7 +31,6 @@ import (
 
 var ErrBadRequest = errors.New("bad request")
 
-// InsertConfig inserts or updates
 func InsertConfig(ctx context.Context, config apiserver.Configuration) (apiserver.Configuration, error) {
 	dbConfig, err := dbConfigFromApiConfig(config)
 	if err != nil {
@@ -131,6 +130,18 @@ func GetConfigs(ctx context.Context) ([]apiserver.Configuration, error) {
 	return apiConfigs, nil
 }
 
+func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, projId string, locationId int32) (*int32, error) {
+	dbLocations, err := appdb.Locations(
+		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
+		appdb.LocationWhere.ProjectID.EQ(projId),
+		appdb.LocationWhere.SerialNumber.EQ(locationId),
+	).AllG(ctx)
+	if err != nil || len(dbLocations) == 0 {
+		return nil, err
+	}
+	return common.Ptr(dbLocations[0].AssetID.Int32), nil
+}
+
 func GetDeviceId(ctx context.Context, assetID int32) (int, error) {
 	dbTag, err := appdb.Tags(
 		appdb.TagWhere.AssetID.EQ(null.Int32From(assetID)),
@@ -145,7 +156,7 @@ func GetDeviceId(ctx context.Context, assetID int32) (int, error) {
 	return id, nil
 }
 
-func GetAssetId(ctx context.Context, config apiserver.Configuration, projId string, deviceId string) (*int32, error) {
+func GetTagAssetId(ctx context.Context, config apiserver.Configuration, projId string, deviceId string) (*int32, error) {
 	dbTags, err := appdb.Tags(
 		appdb.TagWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
 		appdb.TagWhere.ProjectID.EQ(projId),
