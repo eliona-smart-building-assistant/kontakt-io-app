@@ -42,8 +42,8 @@
 		},
 		{
 			"enable": true,
-			"name": "batterylevel",
-			"subtype": "info",
+			"name": "battery_level",
+			"subtype": "status",
 			"translation": {
 				"de": "Batteriestand",
 				"en": "Battery Level"
@@ -53,72 +53,72 @@
 		{
 			"enable": true,
 			"name": "pos_x",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Position X",
 				"en": "Position X"
 			},
-			"type": "device-info"
+			"type": "device-status"
 		},
 		{
 			"enable": true,
 			"name": "pos_y",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Position Y",
 				"en": "Position Y"
 			},
-			"type": "device-info"
+			"type": "device-status"
 		},
 		{
 			"enable": true,
 			"name": "humidity",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Luftfeuchtigkeit",
 				"en": "Humidity"
 			},
-			"type": "device-info"
+			"type": "humidity"
 		},
 		{
 			"enable": true,
 			"name": "light_intensity",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Lichtintensität",
 				"en": "Light Intensity"
 			},
-			"type": "device-info"
+			"type": "brightness"
 		},
 		{
 			"enable": true,
 			"name": "temperature",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Temperatur",
 				"en": "Temperature"
 			},
-			"type": "device-info"
+			"type": "temperature"
 		},
 		{
 			"enable": true,
 			"name": "air_quality",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Luftqualität",
 				"en": "Air Quality"
 			},
-			"type": "device-info"
+			"type": "air-quality"
 		},
 		{
 			"enable": true,
 			"name": "air_pressure",
-			"subtype": "info",
+			"subtype": "input",
 			"translation": {
 				"de": "Luftdruck",
 				"en": "Air Pressure"
 			},
-			"type": "device-info"
+			"type": "pressure"
 		}
 	],
 	"custom": true,

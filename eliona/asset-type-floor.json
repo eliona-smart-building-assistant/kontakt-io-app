@@ -28,7 +28,7 @@
 				"de": "Stock",
 				"en": "Level"
 			},
-			"type": "device-info"
+			"type": "level"
 		}
 	],
 	"custom": true,

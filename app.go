@@ -96,6 +96,11 @@ func initLocations(config apiserver.Configuration) error {
 		log.Error("eliona", "creating location assets: %v", err)
 		return err
 	}
+
+	if err := eliona.UpsertLocationData(config, rooms); err != nil {
+		log.Error("eliona", "inserting location data into Eliona: %v", err)
+		return err
+	}
 	return nil
 }
 
@@ -107,6 +112,10 @@ func collectDataForConfig(config apiserver.Configuration) error {
 	}
 	if err := eliona.CreateTagAssetsIfNecessary(config, tags); err != nil {
 		log.Error("eliona", "creating tag assets: %v", err)
+		return err
+	}
+	if err := eliona.UpsertTagData(config, tags); err != nil {
+		log.Error("eliona", "inserting location data into Eliona: %v", err)
 		return err
 	}
 	return nil
