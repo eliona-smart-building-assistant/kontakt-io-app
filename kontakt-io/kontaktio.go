@@ -88,7 +88,7 @@ type device struct {
 	BatteryLevel int    `json:"batteryLevel"`
 	Product      string `json:"product"`
 	Name         string `json:"name"`
-	UniqueID     string `json:"uniqueId"`
+	Mac          string `json:"mac"`
 }
 
 type deviceResponse struct {
@@ -103,9 +103,13 @@ type positionsResponse struct {
 	Content []Tag `json:"content"`
 }
 
-func fetchDevices(config apiserver.Configuration) ([]string, error) {
-	deviceUrl := "https://api.kontakt.io/device?deviceType=BEACON"
-	r, err := http.NewRequestWithApiKey(deviceUrl, "API-Key", config.ApiKey)
+func fetchDevices(config apiserver.Configuration) (map[string]Tag, error) {
+	headers := map[string]string{
+		"API-Key": config.ApiKey,
+		"Accept":  "application/vnd.com.kontakt+json;version=10",
+	}
+	deviceUrl := "https://api.kontakt.io/device"
+	r, err := http.NewRequestWithHeaders(deviceUrl, headers)
 	if err != nil {
 		return nil, fmt.Errorf("creating request to %s: %v", deviceUrl, err)
 	}
@@ -113,7 +117,7 @@ func fetchDevices(config apiserver.Configuration) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", deviceUrl, err)
 	}
-	var trackingIDs []string
+	tags := make(map[string]Tag)
 	for _, device := range deviceResponse.Devices {
 		if adheres, err := device.AdheresToFilter(config); err != nil {
 			return nil, fmt.Errorf("checking if device adheres to a device filter: %v", err)
@@ -121,19 +125,25 @@ func fetchDevices(config apiserver.Configuration) ([]string, error) {
 			log.Debug("kontaktio", "Device %v skipped, does not adhere to asset filter.", device.Name)
 			continue
 		}
-		trackingIDs = append(trackingIDs, strings.ToLower(device.UniqueID))
+		log.Info("device", "%+v", device)
+		uid := strings.ToLower(device.Mac)
+		tags[uid] = Tag{ID: uid, Name: fmt.Sprintf("%v %v", device.Product, device.Name)}
 	}
 
-	return trackingIDs, nil
+	return tags, nil
 }
 
-func fetchTelemetry(config apiserver.Configuration, trackingIDs []string) (map[string]Tag, error) {
+func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Tag) ([]Tag, error) {
 	telemetryUrl := "https://apps.cloud.us.kontakt.io/v3/telemetry"
 	u, err := url.Parse(telemetryUrl)
 	if err != nil {
 		return nil, fmt.Errorf("shouldn't happen: parsing telemetry URL: %v", err)
 	}
-	trackingIDsFormatted := fmt.Sprintf("[%v]", strings.Join(trackingIDs, ","))
+	trackingIDs := make([]string, 0, len(potentialTags))
+	for id := range potentialTags {
+		trackingIDs = append(trackingIDs, id)
+	}
+	trackingIDsFormatted := strings.Join(trackingIDs, ",")
 	now := time.Now().UTC()
 	startTime := now.Add(-5 * time.Minute)
 	startTimeFormatted := startTime.Format(time.RFC3339)
@@ -154,21 +164,10 @@ func fetchTelemetry(config apiserver.Configuration, trackingIDs []string) (map[s
 		return nil, fmt.Errorf("reading response from %s: %v", u.String(), err)
 	}
 
-	tags := make(map[string]Tag, len(telemetryResponse.Content))
-	for _, t := range telemetryResponse.Content {
-		if tt, ok := tags[t.ID]; ok {
-			if tt.timestamp.After(t.timestamp) {
-				// Already got newer data
-				continue
-			}
-		}
-		tags[t.ID] = t
-	}
-
-	return tags, nil
+	return telemetryResponse.Content, nil
 }
 
-func fetchPositions(config apiserver.Configuration, tags map[string]Tag) (map[string]Tag, error) {
+func fetchPositions(config apiserver.Configuration, tags map[string]Tag) ([]Tag, error) {
 	positionsUrl := "https://apps.cloud.us.kontakt.io/v2/positions?size=2000"
 	r, err := http.NewRequestWithApiKey(positionsUrl, "API-Key", config.ApiKey)
 	if err != nil {
@@ -179,7 +178,37 @@ func fetchPositions(config apiserver.Configuration, tags map[string]Tag) (map[st
 		return nil, fmt.Errorf("reading response from %s: %v", positionsUrl, err)
 	}
 
-	for _, p := range positionsResponse.Content {
+	return positionsResponse.Content, nil
+}
+
+func GetTags(config apiserver.Configuration) ([]Tag, error) {
+	devices, err := fetchDevices(config)
+	if err != nil {
+		return nil, fmt.Errorf("fetching devices: %v", err)
+	}
+
+	telemetry, err := fetchTelemetry(config, devices)
+	if err != nil {
+		return nil, fmt.Errorf("fetching telemetry: %v", err)
+	}
+
+	tags := make(map[string]Tag, len(telemetry))
+	for _, t := range telemetry {
+		if tt, ok := tags[t.ID]; ok {
+			if tt.timestamp.After(t.timestamp) {
+				// Already got newer data
+				continue
+			}
+		}
+		tags[t.ID] = t
+	}
+
+	positions, err := fetchPositions(config, tags)
+	if err != nil {
+		return nil, fmt.Errorf("fetching positions: %v", err)
+	}
+
+	for _, p := range positions {
 		if t, ok := tags[p.ID]; ok {
 			t.PositionX = p.PositionX
 			t.PositionY = p.PositionY
@@ -187,28 +216,13 @@ func fetchPositions(config apiserver.Configuration, tags map[string]Tag) (map[st
 		}
 		tags[p.ID] = p
 	}
-
-	return tags, nil
-}
-
-func GetTags(config apiserver.Configuration) ([]Tag, error) {
-	trackingIDs, err := fetchDevices(config)
-	if err != nil {
-		return nil, fmt.Errorf("fetching devices: %v", err)
-	}
-
-	tags, err := fetchTelemetry(config, trackingIDs)
-	if err != nil {
-		return nil, fmt.Errorf("fetching telemetry: %v", err)
-	}
-
-	tags, err = fetchPositions(config, tags)
-	if err != nil {
-		return nil, fmt.Errorf("fetching positions: %v", err)
-	}
-
 	tagsSlice := make([]Tag, 0, len(tags))
 	for _, tag := range tags {
+		t, ok := devices[tag.ID]
+		if !ok {
+			log.Debug("nonexistent", tag.ID)
+		}
+		tag.Name = t.Name
 		tagsSlice = append(tagsSlice, tag)
 	}
 

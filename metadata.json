@@ -2,16 +2,17 @@
   "name": "kontakt-io",
   "elionaMinVersion": "9.2.0",
   "displayName": {
-    "en": "Kontakt.io app",
-    "de": "Kontakt.io App"
+    "en": "Kontakt.io",
+    "de": "Kontakt.io"
   },
   "description": {
-    "en": "The Kontakt.io app allows access to Kontakt.io devices through an Eliona environment.",
-    "de": "Die Kontakt.io-App ermöglicht den Zugriff auf Kontakt.io-Geräte über eine Eliona-Umgebung."
+    "en": "The Kontakt.io app allows access to Kontakt.io devices.",
+    "de": "Die Kontakt.io-App ermöglicht den Zugriff auf Kontakt.io-Geräte."
   },
   "dashboardTemplateNames": [
     "Kontakt.io devices"
   ],
+  "apiSpecificationPath": "/v1/version/openapi.json",
   "documentationUrl": "https://doc.eliona.io/collection/eliona-apps/externe-apps/kontaktio",
   "useEnvironment": [
     "CONNECTION_STRING",

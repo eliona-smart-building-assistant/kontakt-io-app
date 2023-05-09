@@ -72,10 +72,10 @@ func collectData() {
 		common.RunOnceWithParam(func(config apiserver.Configuration) {
 			log.Info("main", "Collecting %d started", *config.Id)
 
-			if err := initLocations(config); err != nil {
+			if err := collectLocations(config); err != nil {
 				return // Error is handled in the method itself.
 			}
-			if err := collectDataForConfig(config); err != nil {
+			if err := collectTags(config); err != nil {
 				return // Error is handled in the method itself.
 			}
 
@@ -86,7 +86,7 @@ func collectData() {
 	}
 }
 
-func initLocations(config apiserver.Configuration) error {
+func collectLocations(config apiserver.Configuration) error {
 	rooms, err := kontaktio.GetRooms(config)
 	if err != nil {
 		log.Error("kontakt-io", "getting rooms: %v", err)
@@ -104,7 +104,7 @@ func initLocations(config apiserver.Configuration) error {
 	return nil
 }
 
-func collectDataForConfig(config apiserver.Configuration) error {
+func collectTags(config apiserver.Configuration) error {
 	tags, err := kontaktio.GetTags(config)
 	if err != nil {
 		log.Error("kontakt-io", "getting tags info: %v", err)

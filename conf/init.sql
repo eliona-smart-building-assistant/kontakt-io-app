@@ -38,7 +38,7 @@ create table if not exists kontakt_io.location
 	parent_id        bigserial references kontakt_io.location(id),
 	configuration_id bigserial not null references kontakt_io.configuration(id),
 	project_id       text      not null,
-	serial_number    integer   not null,
+	global_asset_id  text      not null,
 	asset_id         integer
 );
 
@@ -48,9 +48,9 @@ create table if not exists kontakt_io.tag
 (
 	configuration_id bigserial references kontakt_io.configuration(id),
 	project_id       text      not null,
-	serial_number    text      not null,
+	global_asset_id  text      not null,
 	asset_id         integer,
-	primary key (configuration_id, project_id, serial_number)
+	primary key (configuration_id, project_id, global_asset_id)
 );
 
 -- Makes the new objects available for all other init steps

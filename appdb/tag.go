@@ -26,7 +26,7 @@ import (
 type Tag struct {
 	ConfigurationID int64      `boil:"configuration_id" json:"configuration_id" toml:"configuration_id" yaml:"configuration_id"`
 	ProjectID       string     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	SerialNumber    string     `boil:"serial_number" json:"serial_number" toml:"serial_number" yaml:"serial_number"`
+	GlobalAssetID   string     `boil:"global_asset_id" json:"global_asset_id" toml:"global_asset_id" yaml:"global_asset_id"`
 	AssetID         null.Int32 `boil:"asset_id" json:"asset_id,omitempty" toml:"asset_id" yaml:"asset_id,omitempty"`
 
 	R *tagR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -36,24 +36,24 @@ type Tag struct {
 var TagColumns = struct {
 	ConfigurationID string
 	ProjectID       string
-	SerialNumber    string
+	GlobalAssetID   string
 	AssetID         string
 }{
 	ConfigurationID: "configuration_id",
 	ProjectID:       "project_id",
-	SerialNumber:    "serial_number",
+	GlobalAssetID:   "global_asset_id",
 	AssetID:         "asset_id",
 }
 
 var TagTableColumns = struct {
 	ConfigurationID string
 	ProjectID       string
-	SerialNumber    string
+	GlobalAssetID   string
 	AssetID         string
 }{
 	ConfigurationID: "tag.configuration_id",
 	ProjectID:       "tag.project_id",
-	SerialNumber:    "tag.serial_number",
+	GlobalAssetID:   "tag.global_asset_id",
 	AssetID:         "tag.asset_id",
 }
 
@@ -62,12 +62,12 @@ var TagTableColumns = struct {
 var TagWhere = struct {
 	ConfigurationID whereHelperint64
 	ProjectID       whereHelperstring
-	SerialNumber    whereHelperstring
+	GlobalAssetID   whereHelperstring
 	AssetID         whereHelpernull_Int32
 }{
 	ConfigurationID: whereHelperint64{field: "\"kontakt_io\".\"tag\".\"configuration_id\""},
 	ProjectID:       whereHelperstring{field: "\"kontakt_io\".\"tag\".\"project_id\""},
-	SerialNumber:    whereHelperstring{field: "\"kontakt_io\".\"tag\".\"serial_number\""},
+	GlobalAssetID:   whereHelperstring{field: "\"kontakt_io\".\"tag\".\"global_asset_id\""},
 	AssetID:         whereHelpernull_Int32{field: "\"kontakt_io\".\"tag\".\"asset_id\""},
 }
 
@@ -99,10 +99,10 @@ func (r *tagR) GetConfiguration() *Configuration {
 type tagL struct{}
 
 var (
-	tagAllColumns            = []string{"configuration_id", "project_id", "serial_number", "asset_id"}
-	tagColumnsWithoutDefault = []string{"project_id", "serial_number"}
+	tagAllColumns            = []string{"configuration_id", "project_id", "global_asset_id", "asset_id"}
+	tagColumnsWithoutDefault = []string{"project_id", "global_asset_id"}
 	tagColumnsWithDefault    = []string{"configuration_id", "asset_id"}
-	tagPrimaryKeyColumns     = []string{"configuration_id", "project_id", "serial_number"}
+	tagPrimaryKeyColumns     = []string{"configuration_id", "project_id", "global_asset_id"}
 	tagGeneratedColumns      = []string{}
 )
 
@@ -559,7 +559,7 @@ func (o *Tag) SetConfiguration(ctx context.Context, exec boil.ContextExecutor, i
 		strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 		strmangle.WhereClause("\"", "\"", 2, tagPrimaryKeyColumns),
 	)
-	values := []interface{}{related.ID, o.ConfigurationID, o.ProjectID, o.SerialNumber}
+	values := []interface{}{related.ID, o.ConfigurationID, o.ProjectID, o.GlobalAssetID}
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -602,13 +602,13 @@ func Tags(mods ...qm.QueryMod) tagQuery {
 }
 
 // FindTagG retrieves a single record by ID.
-func FindTagG(ctx context.Context, configurationID int64, projectID string, serialNumber string, selectCols ...string) (*Tag, error) {
-	return FindTag(ctx, boil.GetContextDB(), configurationID, projectID, serialNumber, selectCols...)
+func FindTagG(ctx context.Context, configurationID int64, projectID string, globalAssetID string, selectCols ...string) (*Tag, error) {
+	return FindTag(ctx, boil.GetContextDB(), configurationID, projectID, globalAssetID, selectCols...)
 }
 
 // FindTag retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindTag(ctx context.Context, exec boil.ContextExecutor, configurationID int64, projectID string, serialNumber string, selectCols ...string) (*Tag, error) {
+func FindTag(ctx context.Context, exec boil.ContextExecutor, configurationID int64, projectID string, globalAssetID string, selectCols ...string) (*Tag, error) {
 	tagObj := &Tag{}
 
 	sel := "*"
@@ -616,10 +616,10 @@ func FindTag(ctx context.Context, exec boil.ContextExecutor, configurationID int
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3", sel,
+		"select %s from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"global_asset_id\"=$3", sel,
 	)
 
-	q := queries.Raw(query, configurationID, projectID, serialNumber)
+	q := queries.Raw(query, configurationID, projectID, globalAssetID)
 
 	err := q.Bind(ctx, exec, tagObj)
 	if err != nil {
@@ -1003,7 +1003,7 @@ func (o *Tag) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, err
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), tagPrimaryKeyMapping)
-	sql := "DELETE FROM \"kontakt_io\".\"tag\" WHERE \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3"
+	sql := "DELETE FROM \"kontakt_io\".\"tag\" WHERE \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"global_asset_id\"=$3"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1118,7 +1118,7 @@ func (o *Tag) ReloadG(ctx context.Context) error {
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Tag) Reload(ctx context.Context, exec boil.ContextExecutor) error {
-	ret, err := FindTag(ctx, exec, o.ConfigurationID, o.ProjectID, o.SerialNumber)
+	ret, err := FindTag(ctx, exec, o.ConfigurationID, o.ProjectID, o.GlobalAssetID)
 	if err != nil {
 		return err
 	}
@@ -1167,21 +1167,21 @@ func (o *TagSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) err
 }
 
 // TagExistsG checks if the Tag row exists.
-func TagExistsG(ctx context.Context, configurationID int64, projectID string, serialNumber string) (bool, error) {
-	return TagExists(ctx, boil.GetContextDB(), configurationID, projectID, serialNumber)
+func TagExistsG(ctx context.Context, configurationID int64, projectID string, globalAssetID string) (bool, error) {
+	return TagExists(ctx, boil.GetContextDB(), configurationID, projectID, globalAssetID)
 }
 
 // TagExists checks if the Tag row exists.
-func TagExists(ctx context.Context, exec boil.ContextExecutor, configurationID int64, projectID string, serialNumber string) (bool, error) {
+func TagExists(ctx context.Context, exec boil.ContextExecutor, configurationID int64, projectID string, globalAssetID string) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"serial_number\"=$3 limit 1)"
+	sql := "select exists(select 1 from \"kontakt_io\".\"tag\" where \"configuration_id\"=$1 AND \"project_id\"=$2 AND \"global_asset_id\"=$3 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
 		fmt.Fprintln(writer, sql)
-		fmt.Fprintln(writer, configurationID, projectID, serialNumber)
+		fmt.Fprintln(writer, configurationID, projectID, globalAssetID)
 	}
-	row := exec.QueryRowContext(ctx, sql, configurationID, projectID, serialNumber)
+	row := exec.QueryRowContext(ctx, sql, configurationID, projectID, globalAssetID)
 
 	err := row.Scan(&exists)
 	if err != nil {
@@ -1193,5 +1193,5 @@ func TagExists(ctx context.Context, exec boil.ContextExecutor, configurationID i
 
 // Exists checks if the Tag row exists.
 func (o *Tag) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
-	return TagExists(ctx, exec, o.ConfigurationID, o.ProjectID, o.SerialNumber)
+	return TagExists(ctx, exec, o.ConfigurationID, o.ProjectID, o.GlobalAssetID)
 }

@@ -48,7 +48,7 @@
 				"de": "Batteriestand",
 				"en": "Battery Level"
 			},
-			"type": "device-info"
+			"type": "battery-voltage"
 		},
 		{
 			"enable": true,
@@ -108,7 +108,7 @@
 				"de": "Luftqualität",
 				"en": "Air Quality"
 			},
-			"type": "air-quality"
+			"type": "air_quality"
 		},
 		{
 			"enable": true,

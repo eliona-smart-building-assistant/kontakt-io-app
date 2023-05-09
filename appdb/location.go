@@ -28,7 +28,7 @@ type Location struct {
 	ParentID        int64      `boil:"parent_id" json:"parent_id" toml:"parent_id" yaml:"parent_id"`
 	ConfigurationID int64      `boil:"configuration_id" json:"configuration_id" toml:"configuration_id" yaml:"configuration_id"`
 	ProjectID       string     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	SerialNumber    int32      `boil:"serial_number" json:"serial_number" toml:"serial_number" yaml:"serial_number"`
+	GlobalAssetID   string     `boil:"global_asset_id" json:"global_asset_id" toml:"global_asset_id" yaml:"global_asset_id"`
 	AssetID         null.Int32 `boil:"asset_id" json:"asset_id,omitempty" toml:"asset_id" yaml:"asset_id,omitempty"`
 
 	R *locationR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -40,14 +40,14 @@ var LocationColumns = struct {
 	ParentID        string
 	ConfigurationID string
 	ProjectID       string
-	SerialNumber    string
+	GlobalAssetID   string
 	AssetID         string
 }{
 	ID:              "id",
 	ParentID:        "parent_id",
 	ConfigurationID: "configuration_id",
 	ProjectID:       "project_id",
-	SerialNumber:    "serial_number",
+	GlobalAssetID:   "global_asset_id",
 	AssetID:         "asset_id",
 }
 
@@ -56,14 +56,14 @@ var LocationTableColumns = struct {
 	ParentID        string
 	ConfigurationID string
 	ProjectID       string
-	SerialNumber    string
+	GlobalAssetID   string
 	AssetID         string
 }{
 	ID:              "location.id",
 	ParentID:        "location.parent_id",
 	ConfigurationID: "location.configuration_id",
 	ProjectID:       "location.project_id",
-	SerialNumber:    "location.serial_number",
+	GlobalAssetID:   "location.global_asset_id",
 	AssetID:         "location.asset_id",
 }
 
@@ -135,14 +135,14 @@ var LocationWhere = struct {
 	ParentID        whereHelperint64
 	ConfigurationID whereHelperint64
 	ProjectID       whereHelperstring
-	SerialNumber    whereHelperint32
+	GlobalAssetID   whereHelperstring
 	AssetID         whereHelpernull_Int32
 }{
 	ID:              whereHelperint64{field: "\"kontakt_io\".\"location\".\"id\""},
 	ParentID:        whereHelperint64{field: "\"kontakt_io\".\"location\".\"parent_id\""},
 	ConfigurationID: whereHelperint64{field: "\"kontakt_io\".\"location\".\"configuration_id\""},
 	ProjectID:       whereHelperstring{field: "\"kontakt_io\".\"location\".\"project_id\""},
-	SerialNumber:    whereHelperint32{field: "\"kontakt_io\".\"location\".\"serial_number\""},
+	GlobalAssetID:   whereHelperstring{field: "\"kontakt_io\".\"location\".\"global_asset_id\""},
 	AssetID:         whereHelpernull_Int32{field: "\"kontakt_io\".\"location\".\"asset_id\""},
 }
 
@@ -194,8 +194,8 @@ func (r *locationR) GetParentLocations() LocationSlice {
 type locationL struct{}
 
 var (
-	locationAllColumns            = []string{"id", "parent_id", "configuration_id", "project_id", "serial_number", "asset_id"}
-	locationColumnsWithoutDefault = []string{"project_id", "serial_number"}
+	locationAllColumns            = []string{"id", "parent_id", "configuration_id", "project_id", "global_asset_id", "asset_id"}
+	locationColumnsWithoutDefault = []string{"project_id", "global_asset_id"}
 	locationColumnsWithDefault    = []string{"id", "parent_id", "configuration_id", "asset_id"}
 	locationPrimaryKeyColumns     = []string{"id"}
 	locationGeneratedColumns      = []string{}

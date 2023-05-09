@@ -960,7 +960,7 @@ func (o *Configuration) AddTags(ctx context.Context, exec boil.ContextExecutor, 
 				strmangle.SetParamNames("\"", "\"", 1, []string{"configuration_id"}),
 				strmangle.WhereClause("\"", "\"", 2, tagPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ID, rel.ConfigurationID, rel.ProjectID, rel.SerialNumber}
+			values := []interface{}{o.ID, rel.ConfigurationID, rel.ProjectID, rel.GlobalAssetID}
 
 			if boil.IsDebug(ctx) {
 				writer := boil.DebugWriterFrom(ctx)
