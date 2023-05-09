@@ -130,16 +130,25 @@ func GetConfigs(ctx context.Context) ([]apiserver.Configuration, error) {
 	return apiConfigs, nil
 }
 
-func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, projId string, locationId int32) (*int32, error) {
+func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, projId string, locationId string) (*int32, error) {
 	dbLocations, err := appdb.Locations(
 		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
 		appdb.LocationWhere.ProjectID.EQ(projId),
-		appdb.LocationWhere.SerialNumber.EQ(locationId),
+		appdb.LocationWhere.GlobalAssetID.EQ(locationId),
 	).AllG(ctx)
 	if err != nil || len(dbLocations) == 0 {
 		return nil, err
 	}
 	return common.Ptr(dbLocations[0].AssetID.Int32), nil
+}
+
+func InsertLocation(ctx context.Context, config apiserver.Configuration, projId string, globalAssetID string, assetId int32) error {
+	var dbLocation appdb.Location
+	dbLocation.ConfigurationID = null.Int64FromPtr(config.Id).Int64
+	dbLocation.ProjectID = projId
+	dbLocation.GlobalAssetID = globalAssetID
+	dbLocation.AssetID = null.Int32From(assetId)
+	return dbLocation.InsertG(ctx, boil.Infer())
 }
 
 func GetDeviceId(ctx context.Context, assetID int32) (int, error) {
@@ -149,9 +158,9 @@ func GetDeviceId(ctx context.Context, assetID int32) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	id, err := strconv.Atoi(dbTag.SerialNumber)
+	id, err := strconv.Atoi(dbTag.GlobalAssetID)
 	if err != nil {
-		return 0, fmt.Errorf("parsing id %s: %v", dbTag.SerialNumber, err)
+		return 0, fmt.Errorf("parsing id %s: %v", dbTag.GlobalAssetID, err)
 	}
 	return id, nil
 }
@@ -160,7 +169,7 @@ func GetTagAssetId(ctx context.Context, config apiserver.Configuration, projId s
 	dbTags, err := appdb.Tags(
 		appdb.TagWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
 		appdb.TagWhere.ProjectID.EQ(projId),
-		appdb.TagWhere.SerialNumber.EQ(deviceId),
+		appdb.TagWhere.GlobalAssetID.EQ(deviceId),
 	).AllG(ctx)
 	if err != nil || len(dbTags) == 0 {
 		return nil, err
@@ -168,11 +177,11 @@ func GetTagAssetId(ctx context.Context, config apiserver.Configuration, projId s
 	return common.Ptr(dbTags[0].AssetID.Int32), nil
 }
 
-func InsertDevice(ctx context.Context, config apiserver.Configuration, projId string, SerialNumber string, assetId int32) error {
+func InsertDevice(ctx context.Context, config apiserver.Configuration, projId string, globalAssetID string, assetId int32) error {
 	var dbTag appdb.Tag
 	dbTag.ConfigurationID = null.Int64FromPtr(config.Id).Int64
 	dbTag.ProjectID = projId
-	dbTag.SerialNumber = SerialNumber
+	dbTag.GlobalAssetID = globalAssetID
 	dbTag.AssetID = null.Int32From(assetId)
 	return dbTag.InsertG(ctx, boil.Infer())
 }

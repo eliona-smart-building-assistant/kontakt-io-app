@@ -72,7 +72,7 @@ type roomInfoDataPayload struct {
 
 func upsertRoomData(config apiserver.Configuration, projectId string, room kontaktio.Room) error {
 	log.Debug("Eliona", "upserting data for room: config %d and room '%s'", config.Id, room.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, int32(room.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, roomAssetType+fmt.Sprint(room.ID))
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ type floorInfoDataPayload struct {
 
 func upsertFloorData(config apiserver.Configuration, projectId string, floor kontaktio.Floor) error {
 	log.Debug("Eliona", "upserting data for floor: config %d and floor '%s'", config.Id, floor.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, int32(floor.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, floorAssetType+fmt.Sprint(floor.ID))
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ type buildingInfoDataPayload struct {
 
 func upsertBuildingData(config apiserver.Configuration, projectId string, building kontaktio.Building) error {
 	log.Debug("Eliona", "upserting data for building: config %d and building '%s'", config.Id, building.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, int32(building.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, buildingAssetType+fmt.Sprint(building.ID))
 	if err != nil {
 		return err
 	}
@@ -156,7 +156,7 @@ func UpsertTagData(config apiserver.Configuration, tags []kontaktio.Tag) error {
 	for _, projectId := range conf.ProjIds(config) {
 		for _, tag := range tags {
 			if err := upsertTagData(config, projectId, tag); err != nil {
-				return fmt.Errorf("upserting MultiSensor data: %v", err)
+				return fmt.Errorf("upserting tag data: %v", err)
 			}
 		}
 	}
@@ -185,8 +185,8 @@ type tagInputDataPayload struct {
 }
 
 func upsertTagData(config apiserver.Configuration, projectId string, tag kontaktio.Tag) error {
-	log.Debug("Eliona", "upserting data for tag %s", tag.Name)
-	assetId, err := conf.GetTagAssetId(context.Background(), config, projectId, tag.ID)
+	log.Debug("Eliona", "upserting data for tag %+v", tag)
+	assetId, err := conf.GetTagAssetId(context.Background(), config, projectId, tagAssetType+fmt.Sprint(tag.ID))
 	if err != nil {
 		return fmt.Errorf("getting asset id: %v", err)
 	}

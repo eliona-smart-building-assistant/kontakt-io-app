@@ -31,17 +31,17 @@ DELETE FROM heap
 WHERE asset_id IN (
 	SELECT asset_id
 	FROM asset
-	WHERE asset_type LIKE E'kontakt_io\\_%'
+	WHERE asset_type LIKE E'kontakt\\_io\\_%'
 );
 
 DELETE FROM attribute_schema
-WHERE asset_type LIKE E'kontakt_io\\_%';
+WHERE asset_type LIKE E'kontakt\\_io\\_%';
 
 DELETE FROM asset
-WHERE asset_type LIKE E'kontakt_io\\_%';
+WHERE asset_type LIKE E'kontakt\\_io\\_%';
 
 DELETE FROM asset_type
-WHERE asset_type LIKE E'kontakt_io\\_%';
+WHERE asset_type LIKE E'kontakt\\_io\\_%';
 
 DELETE FROM public.widget_data
 WHERE widget_id IN (

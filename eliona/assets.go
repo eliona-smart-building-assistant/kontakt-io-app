@@ -21,7 +21,6 @@ import (
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	kontaktio "kontakt-io/kontakt-io"
-	"strconv"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
 	"github.com/eliona-smart-building-assistant/go-eliona/asset"
@@ -30,13 +29,16 @@ import (
 )
 
 const tagAssetType = "kontakt_io_tag"
+const roomAssetType = "kontakt_io_room"
+const floorAssetType = "kontakt_io_floor"
+const buildingAssetType = "kontakt_io_building"
 
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
 	assetData := assetData{
 		config:                  config,
 		projectId:               projectId,
 		parentLocationalAssetId: parentId,
-		identifier:              id,
+		identifier:              assetType + id,
 		assetType:               assetType,
 		name:                    name,
 		description:             fmt.Sprintf("%s (%v)", name, id),
@@ -51,15 +53,15 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), nil, "kontakt_io_building", room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), nil, buildingAssetType, room.Floor.Building.Name)
 			if err != nil {
 				return err
 			}
-			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, "kontakt_io_floor", room.Floor.Name)
+			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, floorAssetType, room.Floor.Name)
 			if err != nil {
 				return err
 			}
-			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, "kontakt_io_room", room.Name); err != nil {
+			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, roomAssetType, room.Name); err != nil {
 				return err
 			}
 		}
@@ -94,11 +96,7 @@ func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 	// Get known asset id from configuration
 	currentAssetID, err := conf.GetTagAssetId(context.Background(), d.config, d.projectId, d.identifier)
 	if d.assetType != tagAssetType {
-		id, errParse := strconv.ParseInt(d.identifier, 10, 32) 
-		if errParse != nil {
-			return false, 0, fmt.Errorf("parsing identifier %s: %v", d.identifier, err)
-		}
-		currentAssetID, err = conf.GetLocationAssetId(context.Background(), d.config, d.projectId, int32(id))
+		currentAssetID, err = conf.GetLocationAssetId(context.Background(), d.config, d.projectId, d.identifier)
 	}
 	if err != nil {
 		return false, 0, fmt.Errorf("finding asset ID: %v", err)
@@ -125,8 +123,14 @@ func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 	}
 
 	// Remember the asset id for further usage
-	if err := conf.InsertDevice(context.Background(), d.config, d.projectId, d.identifier, *newID); err != nil {
-		return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
+	if d.assetType == tagAssetType {
+		if err := conf.InsertDevice(context.Background(), d.config, d.projectId, d.identifier, *newID); err != nil {
+			return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
+		}
+	} else {
+		if err := conf.InsertLocation(context.Background(), d.config, d.projectId, d.identifier, *newID); err != nil {
+			return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
+		}
 	}
 
 	log.Debug("eliona", "Created new asset for project %s and device %s.", d.projectId, d.identifier)
