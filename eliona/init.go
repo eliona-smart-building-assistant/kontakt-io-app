@@ -24,9 +24,6 @@ import (
 
 // InitEliona initializes the app in eliona
 func InitEliona(connection db.Connection) error {
-	if err := asset.InitAssetTypeFile("eliona/asset-type-campus.json")(connection); err != nil {
-		return fmt.Errorf("init campus asset type: %v", err)
-	}
 	if err := asset.InitAssetTypeFile("eliona/asset-type-building.json")(connection); err != nil {
 		return fmt.Errorf("init building asset type: %v", err)
 	}
