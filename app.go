@@ -75,7 +75,7 @@ func collectData() {
 			if err := collectLocations(config); err != nil {
 				return // Error is handled in the method itself.
 			}
-			if err := collectTags(config); err != nil {
+			if err := collectDevices(config); err != nil {
 				return // Error is handled in the method itself.
 			}
 
@@ -104,17 +104,17 @@ func collectLocations(config apiserver.Configuration) error {
 	return nil
 }
 
-func collectTags(config apiserver.Configuration) error {
-	tags, err := kontaktio.GetTags(config)
+func collectDevices(config apiserver.Configuration) error {
+	devices, err := kontaktio.GetDevices(config)
 	if err != nil {
-		log.Error("kontakt-io", "getting tags info: %v", err)
+		log.Error("kontakt-io", "getting devices info: %v", err)
 		return err
 	}
-	if err := eliona.CreateTagAssetsIfNecessary(config, tags); err != nil {
+	if err := eliona.CreateDeviceAssetsIfNecessary(config, devices); err != nil {
 		log.Error("eliona", "creating tag assets: %v", err)
 		return err
 	}
-	if err := eliona.UpsertTagData(config, tags); err != nil {
+	if err := eliona.UpsertDeviceData(config, devices); err != nil {
 		log.Error("eliona", "inserting location data into Eliona: %v", err)
 		return err
 	}

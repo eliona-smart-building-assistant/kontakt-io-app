@@ -52,31 +52,61 @@
 		},
 		{
 			"enable": true,
-			"name": "pos_x",
+			"name": "humidity",
 			"subtype": "input",
 			"translation": {
-				"de": "Position X",
-				"en": "Position X"
+				"de": "Luftfeuchtigkeit",
+				"en": "Humidity"
 			},
-			"type": "device-status"
+			"type": "humidity"
 		},
 		{
 			"enable": true,
-			"name": "pos_y",
+			"name": "light_intensity",
 			"subtype": "input",
 			"translation": {
-				"de": "Position Y",
-				"en": "Position Y"
+				"de": "Lichtintensität",
+				"en": "Light Intensity"
 			},
-			"type": "device-status"
+			"type": "brightness"
+		},
+		{
+			"enable": true,
+			"name": "temperature",
+			"subtype": "input",
+			"translation": {
+				"de": "Temperatur",
+				"en": "Temperature"
+			},
+			"type": "temperature"
+		},
+		{
+			"enable": true,
+			"name": "air_quality",
+			"subtype": "input",
+			"translation": {
+				"de": "Luftqualität",
+				"en": "Air Quality"
+			},
+			"type": "air_quality"
+		},
+		{
+			"enable": true,
+			"name": "air_pressure",
+			"subtype": "input",
+			"translation": {
+				"de": "Luftdruck",
+				"en": "Air Pressure"
+			},
+			"type": "pressure"
 		}
 	],
 	"custom": true,
 	"icon": "button",
-	"name": "kontakt_io_tag",
+	"name": "kontakt_io_beacon",
 	"translation": {
-		"de": "Kontakt.io Tag",
-		"en": "Kontakt.io Tag"
+		"de": "Kontakt.io Beacon",
+		"en": "Kontakt.io Beacon"
 	},
 	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/affd050d36283-telemetry-data-model",
 	"vendor": "Kontakt.io"

@@ -69,14 +69,24 @@
 				"en": "Position Y"
 			},
 			"type": "device-status"
+		},
+		{
+			"enable": true,
+			"name": "temperature",
+			"subtype": "input",
+			"translation": {
+				"de": "Temperatur",
+				"en": "Temperature"
+			},
+			"type": "temperature"
 		}
 	],
 	"custom": true,
 	"icon": "button",
-	"name": "kontakt_io_tag",
+	"name": "kontakt_io_badge",
 	"translation": {
-		"de": "Kontakt.io Tag",
-		"en": "Kontakt.io Tag"
+		"de": "Kontakt.io Smart Badge",
+		"en": "Kontakt.io Smart Badge"
 	},
 	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/affd050d36283-telemetry-data-model",
 	"vendor": "Kontakt.io"
