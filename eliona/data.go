@@ -71,7 +71,7 @@ type roomInfoDataPayload struct {
 }
 
 func upsertRoomData(config apiserver.Configuration, projectId string, room kontaktio.Room) error {
-	log.Debug("Eliona", "upserting data for room: config %d and room '%s'", config.Id, room.ID)
+	log.Debug("Eliona", "upserting data for room: config %d and room '%v'", config.Id, room.ID)
 	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, roomAssetType+fmt.Sprint(room.ID))
 	if err != nil {
 		return err
@@ -99,7 +99,7 @@ type floorInfoDataPayload struct {
 }
 
 func upsertFloorData(config apiserver.Configuration, projectId string, floor kontaktio.Floor) error {
-	log.Debug("Eliona", "upserting data for floor: config %d and floor '%s'", config.Id, floor.ID)
+	log.Debug("Eliona", "upserting data for floor: config %d and floor '%v'", config.Id, floor.ID)
 	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, floorAssetType+fmt.Sprint(floor.ID))
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ type buildingInfoDataPayload struct {
 }
 
 func upsertBuildingData(config apiserver.Configuration, projectId string, building kontaktio.Building) error {
-	log.Debug("Eliona", "upserting data for building: config %d and building '%s'", config.Id, building.ID)
+	log.Debug("Eliona", "upserting data for building: config %d and building '%v'", config.Id, building.ID)
 	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, buildingAssetType+fmt.Sprint(building.ID))
 	if err != nil {
 		return err
@@ -152,7 +152,7 @@ func upsertBuildingData(config apiserver.Configuration, projectId string, buildi
 	return nil
 }
 
-func UpsertTagData(config apiserver.Configuration, tags []kontaktio.Tag) error {
+func UpsertDeviceData(config apiserver.Configuration, tags []kontaktio.Device) error {
 	for _, projectId := range conf.ProjIds(config) {
 		for _, tag := range tags {
 			if err := upsertTagData(config, projectId, tag); err != nil {
@@ -163,30 +163,39 @@ func UpsertTagData(config apiserver.Configuration, tags []kontaktio.Tag) error {
 	return nil
 }
 
-type tagInfoDataPayload struct {
-	ID       string `json:"id"`
+type deviceInfoDataPayload struct {
+	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Firmware string `json:"firmware"`
 	Model    string `json:"model"`
 }
 
-type tagStatusDataPayload struct {
+type deviceStatusDataPayload struct {
 	BatteryLevel string `json:"battery_level"`
 }
 
-type tagInputDataPayload struct {
-	PosX           string `json:"pos_x"`
-	PosY           string `json:"pos_y"`
-	Humidity       string `json:"humidity"`
-	LigthIntensity string `json:"light_intensity"`
-	Temperature    string `json:"temperature"`
-	AirQuality     string `json:"air_quality"`
-	AirPressure    string `json:"air_pressure"`
+type badgeInputDataPayload struct {
+	PosX        string `json:"pos_x"`
+	PosY        string `json:"pos_y"`
+	Temperature string `json:"temperature"`
 }
 
-func upsertTagData(config apiserver.Configuration, projectId string, tag kontaktio.Tag) error {
-	log.Debug("Eliona", "upserting data for tag %+v", tag)
-	assetId, err := conf.GetTagAssetId(context.Background(), config, projectId, tagAssetType+fmt.Sprint(tag.ID))
+type beaconInputDataPayload struct {
+	AirPressure    string `json:"air_pressure"`
+	Humidity       string `json:"humidity"`
+	LightIntensity string `json:"light_intensity"`
+	Temperature    string `json:"temperature"`
+	AirQuality     string `json:"air_quality"`
+}
+
+type tagInputDataPayload struct {
+	PosX string `json:"pos_x"`
+	PosY string `json:"pos_y"`
+}
+
+func upsertTagData(config apiserver.Configuration, projectId string, device kontaktio.Device) error {
+	log.Debug("Eliona", "upserting data for device %+v", device)
+	assetId, err := conf.GetTagAssetId(context.Background(), config, projectId, device.Type+fmt.Sprint(device.ID))
 	if err != nil {
 		return fmt.Errorf("getting asset id: %v", err)
 	}
@@ -196,11 +205,11 @@ func upsertTagData(config apiserver.Configuration, projectId string, tag kontakt
 	if err := upsertData(
 		api.SUBTYPE_INFO,
 		*assetId,
-		tagInfoDataPayload{
-			ID:       tag.ID,
-			Name:     tag.Name,
-			Firmware: tag.Firmware,
-			Model:    fmt.Sprint(tag.Model),
+		deviceInfoDataPayload{
+			Id:       device.ID,
+			Name:     device.Name,
+			Firmware: device.Firmware,
+			Model:    fmt.Sprint(device.Product),
 		},
 	); err != nil {
 		return err
@@ -208,25 +217,38 @@ func upsertTagData(config apiserver.Configuration, projectId string, tag kontakt
 	if err := upsertData(
 		api.SUBTYPE_STATUS,
 		*assetId,
-		tagStatusDataPayload{
-			BatteryLevel: fmt.Sprint(tag.BatteryLevel),
+		deviceStatusDataPayload{
+			BatteryLevel: fmt.Sprint(device.BatteryLevel),
 		},
 	); err != nil {
 		return err
 	}
-	if err := upsertData(
-		api.SUBTYPE_INPUT,
-		*assetId,
-		tagInputDataPayload{
-			PosX:           fmt.Sprint(tag.PositionX),
-			PosY:           fmt.Sprint(tag.PositionY),
-			Humidity:       fmt.Sprint(tag.Humidity),
-			LigthIntensity: fmt.Sprint(tag.LightIntensity),
-			Temperature:    fmt.Sprint(tag.Temperature),
-			AirQuality:     fmt.Sprint(tag.AirQuality),
-			AirPressure:    fmt.Sprint(tag.AirPressure),
-		},
-	); err != nil {
+
+	var inputData any
+	switch device.Type {
+	case tagAssetType:
+		inputData = tagInputDataPayload{
+			PosX: fmt.Sprint(device.PositionX),
+			PosY: fmt.Sprint(device.PositionY),
+		}
+	case beaconAssetType:
+		inputData = beaconInputDataPayload{
+			Humidity:       fmt.Sprint(device.Humidity),
+			LightIntensity: fmt.Sprint(device.LightIntensity),
+			Temperature:    fmt.Sprint(device.Temperature),
+			AirQuality:     fmt.Sprint(device.AirQuality),
+			AirPressure:    fmt.Sprint(device.AirPressure),
+		}
+	case badgeAssetType:
+		inputData = badgeInputDataPayload{
+			PosX:        fmt.Sprint(device.PositionX),
+			PosY:        fmt.Sprint(device.PositionY),
+			Temperature: fmt.Sprint(device.Temperature),
+		}
+	default:
+		return fmt.Errorf("unknown asset type \"%s\"", device.Type)
+	}
+	if err := upsertData(api.SUBTYPE_INPUT, *assetId, inputData); err != nil {
 		return err
 	}
 	return nil

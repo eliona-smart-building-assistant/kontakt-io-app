@@ -28,6 +28,22 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
+// Keep in sync with ../eliona/assets.go
+const tagAssetType = "kontakt_io_tag"
+const badgeAssetType = "kontakt_io_badge"
+const beaconAssetType = "kontakt_io_beacon"
+const roomAssetType = "kontakt_io_room"
+const floorAssetType = "kontakt_io_floor"
+const buildingAssetType = "kontakt_io_building"
+
+const productAnchorBeacon = "Anchor Beacon 2"
+const productAssetTag = "Asset Tag 2"
+const productNanoTag = "Nano Tag"
+const productPortalBeam = "Portal Beam"
+const productPortalLight = "Portal Light AC EU (Plug F)"
+const productPuckBeacon = "Puck Beacon"
+const productSmartBadge = "Smart Badge"
+
 type Building struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -65,45 +81,48 @@ func GetRooms(config apiserver.Configuration) ([]Room, error) {
 	return locationsResponse.Content, nil
 }
 
-type Tag struct {
+type Device struct {
 	ID             string  `json:"trackingId"`
 	Name           string  `json:"uniqueId"`
 	Firmware       string  `json:"firmware"`
-	Model          int     `json:"model"`
+	Product        string  `json:"product"`
 	BatteryLevel   int     `json:"batteryLevel"`
-	PositionX      float64 `json:"pos_x"`
-	PositionY      float64 `json:"pos_y"`
+	PositionX      float64 `json:"x"`
+	PositionY      float64 `json:"y"`
 	Humidity       int     `json:"humidity"`
 	LightIntensity int     `json:"lightIntensity"`
 	Temperature    float64 `json:"temperature"`
 	AirQuality     int     `json:"airQuality"`
 	AirPressure    float64 `json:"airPressure"`
 
+	Type string
+
 	timestamp time.Time `json:"timestamp"`
 }
 
-type device struct {
+type deviceInfo struct {
 	Model        string `json:"model"`
 	ID           string `json:"id"`
 	BatteryLevel int    `json:"batteryLevel"`
 	Product      string `json:"product"`
 	Name         string `json:"name"`
 	Mac          string `json:"mac"`
+	Firmware     string `json:"firmware"`
 }
 
 type deviceResponse struct {
-	Devices []device `json:"devices"`
+	Devices []deviceInfo `json:"devices"`
 }
 
 type telemetryResponse struct {
-	Content []Tag `json:"content"`
+	Content []Device `json:"content"`
 }
 
 type positionsResponse struct {
-	Content []Tag `json:"content"`
+	Content []Device `json:"content"`
 }
 
-func fetchDevices(config apiserver.Configuration) (map[string]Tag, error) {
+func fetchDevices(config apiserver.Configuration) (map[string]Device, error) {
 	headers := map[string]string{
 		"API-Key": config.ApiKey,
 		"Accept":  "application/vnd.com.kontakt+json;version=10",
@@ -117,7 +136,7 @@ func fetchDevices(config apiserver.Configuration) (map[string]Tag, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", deviceUrl, err)
 	}
-	tags := make(map[string]Tag)
+	tags := make(map[string]Device)
 	for _, device := range deviceResponse.Devices {
 		if adheres, err := device.AdheresToFilter(config); err != nil {
 			return nil, fmt.Errorf("checking if device adheres to a device filter: %v", err)
@@ -125,15 +144,20 @@ func fetchDevices(config apiserver.Configuration) (map[string]Tag, error) {
 			log.Debug("kontaktio", "Device %v skipped, does not adhere to asset filter.", device.Name)
 			continue
 		}
-		log.Info("device", "%+v", device)
 		uid := strings.ToLower(device.Mac)
-		tags[uid] = Tag{ID: uid, Name: fmt.Sprintf("%v %v", device.Product, device.Name)}
+		tags[uid] = Device{
+			ID:           uid,
+			Name:         fmt.Sprintf("%v %v", device.Product, device.Name),
+			BatteryLevel: device.BatteryLevel,
+			Firmware:     device.Firmware,
+			Product:      device.Product,
+		}
 	}
 
 	return tags, nil
 }
 
-func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Tag) ([]Tag, error) {
+func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Device) ([]Device, error) {
 	telemetryUrl := "https://apps.cloud.us.kontakt.io/v3/telemetry"
 	u, err := url.Parse(telemetryUrl)
 	if err != nil {
@@ -167,7 +191,7 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Tag
 	return telemetryResponse.Content, nil
 }
 
-func fetchPositions(config apiserver.Configuration, tags map[string]Tag) ([]Tag, error) {
+func fetchPositions(config apiserver.Configuration, tags map[string]Device) ([]Device, error) {
 	positionsUrl := "https://apps.cloud.us.kontakt.io/v2/positions?size=2000"
 	r, err := http.NewRequestWithApiKey(positionsUrl, "API-Key", config.ApiKey)
 	if err != nil {
@@ -181,7 +205,7 @@ func fetchPositions(config apiserver.Configuration, tags map[string]Tag) ([]Tag,
 	return positionsResponse.Content, nil
 }
 
-func GetTags(config apiserver.Configuration) ([]Tag, error) {
+func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	devices, err := fetchDevices(config)
 	if err != nil {
 		return nil, fmt.Errorf("fetching devices: %v", err)
@@ -192,7 +216,7 @@ func GetTags(config apiserver.Configuration) ([]Tag, error) {
 		return nil, fmt.Errorf("fetching telemetry: %v", err)
 	}
 
-	tags := make(map[string]Tag, len(telemetry))
+	tags := make(map[string]Device, len(telemetry))
 	for _, t := range telemetry {
 		if tt, ok := tags[t.ID]; ok {
 			if tt.timestamp.After(t.timestamp) {
@@ -216,20 +240,45 @@ func GetTags(config apiserver.Configuration) ([]Tag, error) {
 		}
 		tags[p.ID] = p
 	}
-	tagsSlice := make([]Tag, 0, len(tags))
+	tagsSlice := make([]Device, 0, len(tags))
 	for _, tag := range tags {
 		t, ok := devices[tag.ID]
 		if !ok {
-			log.Debug("nonexistent", tag.ID)
+			// This happens due to matching Mac address with trackingID.
+			// As this should only be the case for portal lights that provide no valuable
+			// information, we ignore the error.
+			//
+			// Response from kontakt.io support:
+			// In telemetry trackingID is always mac address of beacon or Portal Light.
+			// For Portal Lights you may see difference by +2. Basically BLE mac = WiFi mac + 2
+			log.Debug("kontakt-io", "A tracking ID was %v not matched with a device.", tag.ID)
+			continue
 		}
+		switch t.Product {
+		case productSmartBadge, productAssetTag:
+			tag.Type = badgeAssetType
+		case productNanoTag:
+			tag.Type = tagAssetType
+		case productAnchorBeacon, productPuckBeacon, productPortalBeam:
+			tag.Type = beaconAssetType
+		case productPortalLight:
+			// Provides no valuable information.
+			continue
+		default:
+			log.Debug("kontakt-io", "Skipped unsupported product: %s", t.Product)
+			continue
+		}
+
 		tag.Name = t.Name
+		tag.BatteryLevel = t.BatteryLevel
+		tag.Firmware = t.Firmware
 		tagsSlice = append(tagsSlice, tag)
 	}
 
 	return tagsSlice, nil
 }
 
-func (device *device) AdheresToFilter(config apiserver.Configuration) (bool, error) {
+func (device *deviceInfo) AdheresToFilter(config apiserver.Configuration) (bool, error) {
 	f := apiFilterToCommonFilter(config.AssetFilter)
 	fp, err := structToMap(device)
 	if err != nil {

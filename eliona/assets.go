@@ -28,10 +28,17 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
+// Keep in sync with ../kontakt-io/kontaktio.go
 const tagAssetType = "kontakt_io_tag"
+const badgeAssetType = "kontakt_io_badge"
+const beaconAssetType = "kontakt_io_beacon"
 const roomAssetType = "kontakt_io_room"
 const floorAssetType = "kontakt_io_floor"
 const buildingAssetType = "kontakt_io_building"
+
+func isLocation(assetType string) bool {
+	return assetType == roomAssetType || assetType == floorAssetType || assetType == buildingAssetType
+}
 
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
 	assetData := assetData{
@@ -69,10 +76,10 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 	return nil
 }
 
-func CreateTagAssetsIfNecessary(config apiserver.Configuration, tags []kontaktio.Tag) error {
-	for _, tag := range tags {
+func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kontaktio.Device) error {
+	for _, device := range devices {
 		for _, projectId := range conf.ProjIds(config) {
-			_, err := createAssetIfNecessary(config, projectId, tag.ID, nil, tagAssetType, tag.Name)
+			_, err := createAssetIfNecessary(config, projectId, device.ID, nil, device.Type, device.Name)
 			if err != nil {
 				return err
 			}
@@ -95,7 +102,7 @@ type assetData struct {
 func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 	// Get known asset id from configuration
 	currentAssetID, err := conf.GetTagAssetId(context.Background(), d.config, d.projectId, d.identifier)
-	if d.assetType != tagAssetType {
+	if isLocation(d.assetType) {
 		currentAssetID, err = conf.GetLocationAssetId(context.Background(), d.config, d.projectId, d.identifier)
 	}
 	if err != nil {
@@ -123,7 +130,7 @@ func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 	}
 
 	// Remember the asset id for further usage
-	if d.assetType == tagAssetType {
+	if !isLocation(d.assetType) {
 		if err := conf.InsertDevice(context.Background(), d.config, d.projectId, d.identifier, *newID); err != nil {
 			return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
 		}
