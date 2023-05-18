@@ -1,36 +1,5 @@
 {
-	"attributes": [
-		{
-			"enable": true,
-			"name": "id",
-			"subtype": "info",
-			"translation": {
-				"de": "ID",
-				"en": "ID"
-			},
-			"type": "device-info"
-		},
-		{
-			"enable": true,
-			"name": "name",
-			"subtype": "info",
-			"translation": {
-				"de": "Name",
-				"en": "Name"
-			},
-			"type": "device-info"
-		},
-		{
-			"enable": true,
-			"name": "level",
-			"subtype": "info",
-			"translation": {
-				"de": "Stock",
-				"en": "Level"
-			},
-			"type": "level"
-		}
-	],
+	"attributes": [],
 	"custom": true,
 	"icon": "storey",
 	"name": "kontakt_io_floor",
