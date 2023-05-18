@@ -32,6 +32,7 @@ import (
 const tagAssetType = "kontakt_io_tag"
 const badgeAssetType = "kontakt_io_badge"
 const beaconAssetType = "kontakt_io_beacon"
+const portalBeamAssetType = "kontakt_io_portal_beam"
 const roomAssetType = "kontakt_io_room"
 const floorAssetType = "kontakt_io_floor"
 const buildingAssetType = "kontakt_io_building"
