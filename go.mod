@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/eliona-smart-building-assistant/go-eliona v1.9.6
-	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.4.14
+	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.4.20
 	github.com/eliona-smart-building-assistant/go-utils v1.0.23
 	github.com/friendsofgo/errors v0.9.2
 	github.com/gorilla/mux v1.8.0
@@ -32,7 +32,7 @@ require (
 	github.com/jackc/pgx/v4 v4.18.1 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
-	github.com/spf13/cast v1.5.0 // indirect
+	github.com/spf13/cast v1.5.1 // indirect
 	github.com/volatiletech/inflect v0.0.1 // indirect
 	github.com/volatiletech/randomize v0.0.1 // indirect
 	golang.org/x/crypto v0.9.0 // indirect

@@ -149,9 +149,8 @@ type deviceStatusDataPayload struct {
 }
 
 type badgeInputDataPayload struct {
-	PosX        string `json:"pos_x"`
-	PosY        string `json:"pos_y"`
-	Temperature string `json:"temperature"`
+	WorldPosition []float64 `json:"pos_world"`
+	Temperature   string    `json:"temperature"`
 }
 
 type beaconInputDataPayload struct {
@@ -172,8 +171,7 @@ type portalBeamInputDataPayload struct {
 }
 
 type tagInputDataPayload struct {
-	PosX string `json:"pos_x"`
-	PosY string `json:"pos_y"`
+	WorldPosition []float64 `json:"pos_world"`
 }
 
 func upsertTagData(config apiserver.Configuration, projectId string, device kontaktio.Device) error {
@@ -209,8 +207,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 	switch device.Type {
 	case tagAssetType:
 		inputData = tagInputDataPayload{
-			PosX: fmt.Sprint(device.PositionX),
-			PosY: fmt.Sprint(device.PositionY),
+			WorldPosition: device.WorldPosition,
 		}
 	case beaconAssetType:
 		inputData = beaconInputDataPayload{
@@ -231,9 +228,8 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		}
 	case badgeAssetType:
 		inputData = badgeInputDataPayload{
-			PosX:        fmt.Sprint(device.PositionX),
-			PosY:        fmt.Sprint(device.PositionY),
-			Temperature: fmt.Sprint(device.Temperature),
+			WorldPosition: device.WorldPosition,
+			Temperature:   fmt.Sprint(device.Temperature),
 		}
 	default:
 		return fmt.Errorf("unknown asset type \"%s\"", device.Type)

@@ -43,6 +43,10 @@ func isLocation(assetType string) bool {
 	return assetType == roomAssetType || assetType == floorAssetType || assetType == buildingAssetType
 }
 
+func isTracker(assetType string) bool {
+	return assetType == tagAssetType || assetType == badgeAssetType
+}
+
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
 	assetData := assetData{
 		config:                  config,
@@ -127,6 +131,7 @@ func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 		Description:             *api.NewNullableString(common.Ptr(d.description)),
 		ParentFunctionalAssetId: *api.NewNullableInt32(d.parentFunctionalAssetId),
 		ParentLocationalAssetId: *api.NewNullableInt32(d.parentLocationalAssetId),
+		IsTracker:               *api.NewNullableBool(common.Ptr(isTracker(d.assetType))),
 	}
 	newID, err := asset.UpsertAsset(a)
 	if err != nil {
