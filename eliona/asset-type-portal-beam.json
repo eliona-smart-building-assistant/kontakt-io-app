@@ -1,0 +1,103 @@
+{
+	"attributes": [
+		{
+			"enable": true,
+			"name": "firmware",
+			"subtype": "info",
+			"translation": {
+				"de": "Firmware",
+				"en": "Firmware"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "model",
+			"subtype": "info",
+			"translation": {
+				"de": "Modell",
+				"en": "Model"
+			},
+			"type": "device-info"
+		},
+		{
+			"enable": true,
+			"name": "battery_level",
+			"subtype": "status",
+			"translation": {
+				"de": "Batteriestand",
+				"en": "Battery Level"
+			},
+			"type": "battery-voltage"
+		},
+		{
+			"enable": true,
+			"name": "humidity",
+			"subtype": "input",
+			"translation": {
+				"de": "Luftfeuchtigkeit",
+				"en": "Humidity"
+			},
+			"type": "humidity"
+		},
+		{
+			"enable": true,
+			"name": "light_intensity",
+			"subtype": "input",
+			"translation": {
+				"de": "Lichtintensität",
+				"en": "Light Intensity"
+			},
+			"type": "brightness"
+		},
+		{
+			"enable": true,
+			"name": "temperature",
+			"subtype": "input",
+			"translation": {
+				"de": "Temperatur",
+				"en": "Temperature"
+			},
+			"type": "temperature"
+		},
+		{
+			"enable": true,
+			"name": "air_quality",
+			"subtype": "input",
+			"translation": {
+				"de": "Luftqualität",
+				"en": "Air Quality"
+			},
+			"type": "air_quality"
+		},
+		{
+			"enable": true,
+			"name": "air_pressure",
+			"subtype": "input",
+			"translation": {
+				"de": "Luftdruck",
+				"en": "Air Pressure"
+			},
+			"type": "pressure"
+		},
+		{
+			"enable": true,
+			"name": "people_count",
+			"subtype": "input",
+			"translation": {
+				"de": "Anzahl der Personen",
+				"en": "People count"
+			},
+			"type": "people-count"
+		}
+	],
+	"custom": true,
+	"icon": "button",
+	"name": "kontakt_io_portal_beam",
+	"translation": {
+		"de": "Kontakt.io Portal Beam",
+		"en": "Kontakt.io Portal Beam"
+	},
+	"urldoc": "https://developer.kontakt.io/docs/dev-ctr-loc-occ-api/affd050d36283-telemetry-data-model",
+	"vendor": "Kontakt.io"
+}

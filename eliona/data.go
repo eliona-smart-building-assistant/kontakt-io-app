@@ -162,6 +162,15 @@ type beaconInputDataPayload struct {
 	AirQuality     string `json:"air_quality"`
 }
 
+type portalBeamInputDataPayload struct {
+	AirPressure    string `json:"air_pressure"`
+	Humidity       string `json:"humidity"`
+	LightIntensity string `json:"light_intensity"`
+	Temperature    string `json:"temperature"`
+	AirQuality     string `json:"air_quality"`
+	PeopleCount    string `json:"people_count"`
+}
+
 type tagInputDataPayload struct {
 	PosX string `json:"pos_x"`
 	PosY string `json:"pos_y"`
@@ -210,6 +219,15 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 			Temperature:    fmt.Sprint(device.Temperature),
 			AirQuality:     fmt.Sprint(device.AirQuality),
 			AirPressure:    fmt.Sprint(device.AirPressure),
+		}
+	case portalBeamAssetType:
+		inputData = portalBeamInputDataPayload{
+			Humidity:       fmt.Sprint(device.Humidity),
+			LightIntensity: fmt.Sprint(device.LightIntensity),
+			Temperature:    fmt.Sprint(device.Temperature),
+			AirQuality:     fmt.Sprint(device.AirQuality),
+			AirPressure:    fmt.Sprint(device.AirPressure),
+			PeopleCount:    fmt.Sprint(device.PeopleCount),
 		}
 	case badgeAssetType:
 		inputData = badgeInputDataPayload{

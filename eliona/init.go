@@ -39,6 +39,9 @@ func InitEliona(connection db.Connection) error {
 	if err := asset.InitAssetTypeFile("eliona/asset-type-beacon.json")(connection); err != nil {
 		return fmt.Errorf("init beacon asset type: %v", err)
 	}
+	if err := asset.InitAssetTypeFile("eliona/asset-type-portal-beam.json")(connection); err != nil {
+		return fmt.Errorf("init portal beam asset type: %v", err)
+	}
 	if err := asset.InitAssetTypeFile("eliona/asset-type-badge.json")(connection); err != nil {
 		return fmt.Errorf("init badge asset type: %v", err)
 	}

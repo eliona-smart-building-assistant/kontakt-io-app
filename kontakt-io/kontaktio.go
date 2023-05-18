@@ -32,6 +32,7 @@ import (
 const tagAssetType = "kontakt_io_tag"
 const badgeAssetType = "kontakt_io_badge"
 const beaconAssetType = "kontakt_io_beacon"
+const portalBeamAssetType = "kontakt_io_portal_beam"
 const roomAssetType = "kontakt_io_room"
 const floorAssetType = "kontakt_io_floor"
 const buildingAssetType = "kontakt_io_building"
@@ -94,6 +95,7 @@ type Device struct {
 	Temperature    float64 `json:"temperature"`
 	AirQuality     int     `json:"airQuality"`
 	AirPressure    float64 `json:"airPressure"`
+	PeopleCount    int     `json:"numberOfPeopleDetected"`
 
 	Type string
 
@@ -259,8 +261,10 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 			tag.Type = badgeAssetType
 		case productNanoTag:
 			tag.Type = tagAssetType
-		case productAnchorBeacon, productPuckBeacon, productPortalBeam:
+		case productAnchorBeacon, productPuckBeacon:
 			tag.Type = beaconAssetType
+		case productPortalBeam:
+			tag.Type = portalBeamAssetType
 		case productPortalLight:
 			// Provides no valuable information.
 			continue
