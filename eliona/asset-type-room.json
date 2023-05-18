@@ -1,26 +1,5 @@
 {
-	"attributes": [
-		{
-			"enable": true,
-			"name": "id",
-			"subtype": "info",
-			"translation": {
-				"de": "ID",
-				"en": "ID"
-			},
-			"type": "device-info"
-		},
-		{
-			"enable": true,
-			"name": "name",
-			"subtype": "info",
-			"translation": {
-				"de": "Name",
-				"en": "Name"
-			},
-			"type": "device-info"
-		}
-	],
+	"attributes": [],
 	"custom": true,
 	"icon": "closable",
 	"name": "kontakt_io_room",

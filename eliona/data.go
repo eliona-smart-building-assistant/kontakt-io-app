@@ -65,10 +65,7 @@ func UpsertLocationData(config apiserver.Configuration, rooms []kontaktio.Room) 
 	return nil
 }
 
-type roomInfoDataPayload struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
+type roomInfoDataPayload struct{}
 
 func upsertRoomData(config apiserver.Configuration, projectId string, room kontaktio.Room) error {
 	log.Debug("Eliona", "upserting data for room: config %d and room '%v'", config.Id, room.ID)
@@ -82,21 +79,14 @@ func upsertRoomData(config apiserver.Configuration, projectId string, room konta
 	if err := upsertData(
 		api.SUBTYPE_INFO,
 		*assetId,
-		roomInfoDataPayload{
-			ID:   room.ID,
-			Name: room.Name,
-		},
+		roomInfoDataPayload{},
 	); err != nil {
 		return fmt.Errorf("upserting info data: %v", err)
 	}
 	return nil
 }
 
-type floorInfoDataPayload struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Level int    `json:"level"`
-}
+type floorInfoDataPayload struct{}
 
 func upsertFloorData(config apiserver.Configuration, projectId string, floor kontaktio.Floor) error {
 	log.Debug("Eliona", "upserting data for floor: config %d and floor '%v'", config.Id, floor.ID)
@@ -110,23 +100,14 @@ func upsertFloorData(config apiserver.Configuration, projectId string, floor kon
 	if err := upsertData(
 		api.SUBTYPE_INFO,
 		*assetId,
-		floorInfoDataPayload{
-			ID:    floor.ID,
-			Name:  floor.Name,
-			Level: floor.Level,
-		},
+		floorInfoDataPayload{},
 	); err != nil {
 		return fmt.Errorf("upserting info data: %v", err)
 	}
 	return nil
 }
 
-type buildingInfoDataPayload struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Address     string `json:"address"`
-	Description string `json:"description"`
-}
+type buildingInfoDataPayload struct{}
 
 func upsertBuildingData(config apiserver.Configuration, projectId string, building kontaktio.Building) error {
 	log.Debug("Eliona", "upserting data for building: config %d and building '%v'", config.Id, building.ID)
@@ -140,12 +121,7 @@ func upsertBuildingData(config apiserver.Configuration, projectId string, buildi
 	if err := upsertData(
 		api.SUBTYPE_INFO,
 		*assetId,
-		buildingInfoDataPayload{
-			ID:          building.ID,
-			Name:        building.Name,
-			Address:     building.Address,
-			Description: building.Description,
-		},
+		buildingInfoDataPayload{},
 	); err != nil {
 		return fmt.Errorf("upserting info data: %v", err)
 	}
@@ -164,8 +140,6 @@ func UpsertDeviceData(config apiserver.Configuration, tags []kontaktio.Device) e
 }
 
 type deviceInfoDataPayload struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
 	Firmware string `json:"firmware"`
 	Model    string `json:"model"`
 }
@@ -206,8 +180,6 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		api.SUBTYPE_INFO,
 		*assetId,
 		deviceInfoDataPayload{
-			Id:       device.ID,
-			Name:     device.Name,
 			Firmware: device.Firmware,
 			Model:    fmt.Sprint(device.Product),
 		},
