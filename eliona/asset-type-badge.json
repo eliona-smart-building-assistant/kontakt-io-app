@@ -32,21 +32,11 @@
 		},
 		{
 			"enable": true,
-			"name": "pos_x",
+			"name": "pos_world",
 			"subtype": "input",
 			"translation": {
-				"de": "Position X",
-				"en": "Position X"
-			},
-			"type": "device-status"
-		},
-		{
-			"enable": true,
-			"name": "pos_y",
-			"subtype": "input",
-			"translation": {
-				"de": "Position Y",
-				"en": "Position Y"
+				"de": "Karteposition",
+				"en": "Map Position"
 			},
 			"type": "device-status"
 		},

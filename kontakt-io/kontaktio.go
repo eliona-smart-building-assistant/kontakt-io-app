@@ -88,8 +88,6 @@ type Device struct {
 	Firmware       string  `json:"firmware"`
 	Product        string  `json:"product"`
 	BatteryLevel   int     `json:"batteryLevel"`
-	PositionX      float64 `json:"x"`
-	PositionY      float64 `json:"y"`
 	Humidity       int     `json:"humidity"`
 	LightIntensity int     `json:"lightIntensity"`
 	Temperature    float64 `json:"temperature"`
@@ -97,9 +95,12 @@ type Device struct {
 	AirPressure    float64 `json:"airPressure"`
 	PeopleCount    int     `json:"numberOfPeopleDetected"`
 
-	Type string
+	Type          string
+	WorldPosition []float64
 
-	timestamp time.Time `json:"timestamp"`
+	PositionX float64   `json:"x"`
+	PositionY float64   `json:"y"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type deviceInfo struct {
@@ -221,7 +222,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	tags := make(map[string]Device, len(telemetry))
 	for _, t := range telemetry {
 		if tt, ok := tags[t.ID]; ok {
-			if tt.timestamp.After(t.timestamp) {
+			if tt.Timestamp.After(t.Timestamp) {
 				// Already got newer data
 				continue
 			}
@@ -233,11 +234,14 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fetching positions: %v", err)
 	}
+	log.Info("s", "%+v", positions)
 
 	for _, p := range positions {
+		// todo: here the calc
+		// todo: here the level
+		p.WorldPosition = []float64{p.PositionX, p.PositionY, 0}
 		if t, ok := tags[p.ID]; ok {
-			t.PositionX = p.PositionX
-			t.PositionY = p.PositionY
+			t.WorldPosition = p.WorldPosition
 			p = t
 		}
 		tags[p.ID] = p
