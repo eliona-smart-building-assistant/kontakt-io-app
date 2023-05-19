@@ -1,0 +1,31 @@
+{
+	"name": "Kontakt.io Air Sensor",
+	"custom": false,
+	"translation": {
+		"de": "Kontakt.io Luftsensor",
+		"en": "Kontakt.io Air Sensor",
+		"fr": "Kontakt.io Capteur d'air",
+		"it": "Kontakt.io Sensore d'aria"
+	},
+	"icon": "widgetComfort",
+	"withAlarm": true,
+	"withTimespan": true,
+	"elements": [
+		{
+			"category": "comfort",
+			"sequence": 1,
+			"config": {
+				"description": "",
+				"text": ""
+			}
+		},
+		{
+			"category": "value",
+			"sequence": 2,
+			"config": {
+				"description": "",
+				"variant": "big"
+			}
+		}
+	]
+}

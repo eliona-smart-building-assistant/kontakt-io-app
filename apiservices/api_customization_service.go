@@ -18,8 +18,11 @@ package apiservices
 import (
 	"context"
 	"kontakt-io/apiserver"
+	"kontakt-io/eliona"
 	"net/http"
 )
+
+const templateName = "Kontakt.io sensors"
 
 // CustomizationApiService is a service that implements the logic for the CustomizationApiServicer
 // This service should implement the business logic for every endpoint for the CustomizationApi API.
@@ -34,8 +37,12 @@ func NewCustomizationApiService() apiserver.CustomizationApiServicer {
 
 // GetDashboardTemplateByName - Get a full dashboard template
 func (s *CustomizationApiService) GetDashboardTemplateByName(ctx context.Context, dashboardTemplateName string, projectId string) (apiserver.ImplResponse, error) {
-	if dashboardTemplateName == "Template" {
-		return apiserver.ImplResponse{Code: http.StatusNotImplemented}, nil
+	if dashboardTemplateName == templateName {
+		dashboard, err := eliona.DevicesDashboard(projectId)
+		if err != nil {
+			return apiserver.ImplResponse{Code: http.StatusInternalServerError}, err
+		}
+		return apiserver.Response(http.StatusOK, dashboard), nil
 	} else {
 		return apiserver.ImplResponse{Code: http.StatusNotFound}, nil
 	}
