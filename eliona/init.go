@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/eliona-smart-building-assistant/go-eliona/asset"
+	"github.com/eliona-smart-building-assistant/go-eliona/dashboard"
 	"github.com/eliona-smart-building-assistant/go-utils/db"
 )
 
@@ -44,6 +45,10 @@ func InitEliona(connection db.Connection) error {
 	}
 	if err := asset.InitAssetTypeFile("eliona/asset-type-badge.json")(connection); err != nil {
 		return fmt.Errorf("init badge asset type: %v", err)
+	}
+
+	if err := dashboard.InitWidgetTypeFile("eliona/widget-type-air-sensor.json")(connection); err != nil {
+		return fmt.Errorf("init air sensor widget type: %v", err)
 	}
 	return nil
 }
