@@ -37,6 +37,8 @@ const roomAssetType = "kontakt_io_room"
 const floorAssetType = "kontakt_io_floor"
 const buildingAssetType = "kontakt_io_building"
 
+const rootAssetType = "kontakt_io_root"
+
 func isLocation(assetType string) bool {
 	return assetType == roomAssetType || assetType == floorAssetType || assetType == buildingAssetType
 }
@@ -60,8 +62,12 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
+		rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, rootAssetType, "Kontakt.io")
+		if err != nil {
+			return err
+		}
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), nil, buildingAssetType, room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, buildingAssetType, room.Floor.Building.Name)
 			if err != nil {
 				return err
 			}
@@ -78,8 +84,8 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 }
 
 func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kontaktio.Device) error {
-	for _, device := range devices {
-		for _, projectId := range conf.ProjIds(config) {
+	for _, projectId := range conf.ProjIds(config) {
+		for _, device := range devices {
 			_, err := createAssetIfNecessary(config, projectId, device.ID, nil, device.Type, device.Name)
 			if err != nil {
 				return err

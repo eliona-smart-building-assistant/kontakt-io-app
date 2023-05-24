@@ -1,0 +1,11 @@
+{
+	"attributes": [],
+	"custom": true,
+	"icon": "building",
+	"name": "kontakt_io_root",
+	"translation": {
+		"de": "Kontakt.io Root Asset",
+		"en": "Kontakt.io root asset"
+	},
+	"vendor": "Kontakt.io"
+}
