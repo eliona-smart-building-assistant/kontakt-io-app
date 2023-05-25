@@ -130,6 +130,17 @@ func GetConfigs(ctx context.Context) ([]apiserver.Configuration, error) {
 	return apiConfigs, nil
 }
 
+func GetLocationIrrespectibleOfProject(ctx context.Context, config apiserver.Configuration, locationId string) (*appdb.Location, error) {
+	dbLocations, err := appdb.Locations(
+		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
+		appdb.LocationWhere.GlobalAssetID.EQ(locationId),
+	).AllG(ctx)
+	if err != nil || len(dbLocations) == 0 {
+		return nil, err
+	}
+	return dbLocations[0], nil
+}
+
 func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, projId string, locationId string) (*int32, error) {
 	dbLocations, err := appdb.Locations(
 		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
