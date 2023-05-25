@@ -1,5 +1,16 @@
 {
-	"attributes": [],
+	"attributes": [
+		{
+			"enable": true,
+			"name": "height",
+			"subtype": "output",
+			"translation": {
+				"de": "Höhe über Grund",
+				"en": "Height above ground"
+			},
+			"type": "device-info"
+		}
+	],
 	"custom": true,
 	"icon": "storey",
 	"name": "kontakt_io_floor",

@@ -16,8 +16,10 @@
 package kontaktio
 
 import (
+	"context"
 	"fmt"
 	"kontakt-io/apiserver"
+	"kontakt-io/conf"
 	"net/url"
 	"reflect"
 	"strings"
@@ -100,6 +102,7 @@ type Device struct {
 
 	PositionX float64   `json:"x"`
 	PositionY float64   `json:"y"`
+	FloorID   int       `json:"floorId"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -234,12 +237,24 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fetching positions: %v", err)
 	}
-	log.Info("s", "%+v", positions)
 
 	for _, p := range positions {
-		// todo: here the calc
-		// todo: here the level
-		p.WorldPosition = []float64{p.PositionX, p.PositionY, 0}
+		// todo: Allow to modify the origin
+		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, floorAssetType+fmt.Sprint(p.FloorID))
+		if err != nil {
+			return nil, fmt.Errorf("finding floor %v (irrespectible of project): %v", p.FloorID, err)
+		}
+		if f == nil {
+			log.Error("kontakt-io", "found no corresponding location for tag %v floor %v", p.ID, p.FloorID)
+			continue
+		}
+		floor := *f
+		floorHeight := floor.FloorHeight.Float64
+		if floor.FloorHeight.Valid == false {
+			log.Info("kontakt-io", "floor %v has no height set, assuming 0", floor.AssetID.Int32)
+			floorHeight = 0
+		}
+		p.WorldPosition = []float64{p.PositionX, p.PositionY, floorHeight}
 		if t, ok := tags[p.ID]; ok {
 			t.WorldPosition = p.WorldPosition
 			p = t

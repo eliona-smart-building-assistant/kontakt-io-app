@@ -24,12 +24,13 @@ import (
 
 // Location is an object representing the database table.
 type Location struct {
-	ID              int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	ParentID        int64      `boil:"parent_id" json:"parent_id" toml:"parent_id" yaml:"parent_id"`
-	ConfigurationID int64      `boil:"configuration_id" json:"configuration_id" toml:"configuration_id" yaml:"configuration_id"`
-	ProjectID       string     `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
-	GlobalAssetID   string     `boil:"global_asset_id" json:"global_asset_id" toml:"global_asset_id" yaml:"global_asset_id"`
-	AssetID         null.Int32 `boil:"asset_id" json:"asset_id,omitempty" toml:"asset_id" yaml:"asset_id,omitempty"`
+	ID              int64        `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ParentID        int64        `boil:"parent_id" json:"parent_id" toml:"parent_id" yaml:"parent_id"`
+	ConfigurationID int64        `boil:"configuration_id" json:"configuration_id" toml:"configuration_id" yaml:"configuration_id"`
+	ProjectID       string       `boil:"project_id" json:"project_id" toml:"project_id" yaml:"project_id"`
+	GlobalAssetID   string       `boil:"global_asset_id" json:"global_asset_id" toml:"global_asset_id" yaml:"global_asset_id"`
+	FloorHeight     null.Float64 `boil:"floor_height" json:"floor_height,omitempty" toml:"floor_height" yaml:"floor_height,omitempty"`
+	AssetID         null.Int32   `boil:"asset_id" json:"asset_id,omitempty" toml:"asset_id" yaml:"asset_id,omitempty"`
 
 	R *locationR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L locationL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,6 +42,7 @@ var LocationColumns = struct {
 	ConfigurationID string
 	ProjectID       string
 	GlobalAssetID   string
+	FloorHeight     string
 	AssetID         string
 }{
 	ID:              "id",
@@ -48,6 +50,7 @@ var LocationColumns = struct {
 	ConfigurationID: "configuration_id",
 	ProjectID:       "project_id",
 	GlobalAssetID:   "global_asset_id",
+	FloorHeight:     "floor_height",
 	AssetID:         "asset_id",
 }
 
@@ -57,6 +60,7 @@ var LocationTableColumns = struct {
 	ConfigurationID string
 	ProjectID       string
 	GlobalAssetID   string
+	FloorHeight     string
 	AssetID         string
 }{
 	ID:              "location.id",
@@ -64,6 +68,7 @@ var LocationTableColumns = struct {
 	ConfigurationID: "location.configuration_id",
 	ProjectID:       "location.project_id",
 	GlobalAssetID:   "location.global_asset_id",
+	FloorHeight:     "location.floor_height",
 	AssetID:         "location.asset_id",
 }
 
@@ -91,6 +96,44 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 	}
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
+
+type whereHelpernull_Float64 struct{ field string }
+
+func (w whereHelpernull_Float64) EQ(x null.Float64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Float64) NEQ(x null.Float64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Float64) LT(x null.Float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Float64) LTE(x null.Float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Float64) GT(x null.Float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Float64) GTE(x null.Float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelpernull_Float64) IN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelpernull_Float64) NIN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
+func (w whereHelpernull_Float64) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Float64) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 type whereHelpernull_Int32 struct{ field string }
 
@@ -136,6 +179,7 @@ var LocationWhere = struct {
 	ConfigurationID whereHelperint64
 	ProjectID       whereHelperstring
 	GlobalAssetID   whereHelperstring
+	FloorHeight     whereHelpernull_Float64
 	AssetID         whereHelpernull_Int32
 }{
 	ID:              whereHelperint64{field: "\"kontakt_io\".\"location\".\"id\""},
@@ -143,6 +187,7 @@ var LocationWhere = struct {
 	ConfigurationID: whereHelperint64{field: "\"kontakt_io\".\"location\".\"configuration_id\""},
 	ProjectID:       whereHelperstring{field: "\"kontakt_io\".\"location\".\"project_id\""},
 	GlobalAssetID:   whereHelperstring{field: "\"kontakt_io\".\"location\".\"global_asset_id\""},
+	FloorHeight:     whereHelpernull_Float64{field: "\"kontakt_io\".\"location\".\"floor_height\""},
 	AssetID:         whereHelpernull_Int32{field: "\"kontakt_io\".\"location\".\"asset_id\""},
 }
 
@@ -194,9 +239,9 @@ func (r *locationR) GetParentLocations() LocationSlice {
 type locationL struct{}
 
 var (
-	locationAllColumns            = []string{"id", "parent_id", "configuration_id", "project_id", "global_asset_id", "asset_id"}
+	locationAllColumns            = []string{"id", "parent_id", "configuration_id", "project_id", "global_asset_id", "floor_height", "asset_id"}
 	locationColumnsWithoutDefault = []string{"project_id", "global_asset_id"}
-	locationColumnsWithDefault    = []string{"id", "parent_id", "configuration_id", "asset_id"}
+	locationColumnsWithDefault    = []string{"id", "parent_id", "configuration_id", "floor_height", "asset_id"}
 	locationPrimaryKeyColumns     = []string{"id"}
 	locationGeneratedColumns      = []string{}
 )

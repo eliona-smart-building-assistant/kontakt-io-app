@@ -39,6 +39,7 @@ create table if not exists kontakt_io.location
 	configuration_id bigserial not null references kontakt_io.configuration(id),
 	project_id       text      not null,
 	global_asset_id  text      not null,
+	floor_height     float,
 	asset_id         integer
 );
 
