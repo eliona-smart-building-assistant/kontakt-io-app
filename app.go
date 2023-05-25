@@ -121,6 +121,26 @@ func collectDevices(config apiserver.Configuration) error {
 	return nil
 }
 
+func listenForOutputChanges() {
+	outputs, err := eliona.ListenForOutputChanges()
+	if err != nil {
+		log.Error("eliona", "listening for output changes: %v", err)
+		return
+	}
+	for output := range outputs {
+		height, ok := output.Data["height"]
+		log.Info("output", "%+v\n%+v", output.Data, height)
+		if !ok {
+			log.Error("eliona", "no 'height' attribute in data")
+			return
+		}
+		if err := conf.SetFloorHeight(output.AssetId, height.(float64)); err != nil {
+			log.Error("conf", "setting floor height: %v", err)
+			return
+		}
+	}
+}
+
 // listenApi starts the API server and listen for requests
 func listenApi() {
 	err := http.ListenAndServe(":"+common.Getenv("API_SERVER_PORT", "3000"), apiserver.NewRouter(

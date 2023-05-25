@@ -130,6 +130,23 @@ func GetConfigs(ctx context.Context) ([]apiserver.Configuration, error) {
 	return apiConfigs, nil
 }
 
+func SetFloorHeight(assetId int32, height float64) error {
+	ctx := context.Background()
+	dbLocations, err := appdb.Locations(
+		appdb.LocationWhere.AssetID.EQ(null.Int32From(assetId)),
+	).UpdateAllG(ctx, appdb.M{
+		appdb.LocationColumns.FloorHeight: height,
+	})
+	if err != nil {
+		return fmt.Errorf("fetching location with assetId %v: %v", assetId,  err)
+	}
+	if dbLocations == 0 {
+		return fmt.Errorf("no location with assetId %v found", assetId)
+	}
+	return nil
+}
+
+
 func GetLocationIrrespectibleOfProject(ctx context.Context, config apiserver.Configuration, locationId string) (*appdb.Location, error) {
 	dbLocations, err := appdb.Locations(
 		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
