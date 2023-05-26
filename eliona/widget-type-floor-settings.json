@@ -1,0 +1,26 @@
+{
+	"name": "Kontakt.io floor settings",
+	"custom": false,
+	"translation": {
+		"de": "Kontakt.io Stockwerkeinstellungen",
+		"en": "Kontakt.io Floor Settings",
+		"fr": "Kontakt.io Paramètres d'étage",
+		"it": "Kontakt.io Impostazioni del piano"
+	},
+	"icon": "kompressor",
+	"withAlarm": false,
+	"withTimespan": true,
+	"elements": [
+		{
+			"id": 167,
+			"category": "input",
+			"sequence": 1,
+			"config": {
+				"description": "Above ground height",
+				"resetTime": 2,
+				"text": "Height",
+				"type": "input"
+			}
+		}
+	]
+}

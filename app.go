@@ -128,15 +128,16 @@ func listenForOutputChanges() {
 		return
 	}
 	for output := range outputs {
+		// TODO: Filter for only own asset types. 
 		height, ok := output.Data["height"]
 		log.Info("output", "%+v\n%+v", output.Data, height)
 		if !ok {
-			log.Error("eliona", "no 'height' attribute in data")
-			return
+			log.Debug("eliona", "no 'height' attribute in data: %+v", output)
+			continue
 		}
 		if err := conf.SetFloorHeight(output.AssetId, height.(float64)); err != nil {
 			log.Error("conf", "setting floor height: %v", err)
-			return
+			continue
 		}
 	}
 }

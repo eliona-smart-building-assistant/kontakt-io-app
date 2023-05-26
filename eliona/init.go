@@ -53,5 +53,8 @@ func InitEliona(connection db.Connection) error {
 	if err := dashboard.InitWidgetTypeFile("eliona/widget-type-air-sensor.json")(connection); err != nil {
 		return fmt.Errorf("init air sensor widget type: %v", err)
 	}
+	if err := dashboard.InitWidgetTypeFile("eliona/widget-type-floor-settings.json")(connection); err != nil {
+		return fmt.Errorf("init floor settings widget type: %v", err)
+	}
 	return nil
 }

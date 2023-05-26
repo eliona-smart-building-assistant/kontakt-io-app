@@ -55,7 +55,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 			Data: map[string]interface{}{
 				"aggregatedDataType": "heap",
 				"attribute":          "people_count",
-				"description":        fmt.Sprintf("%s - occupancy", portalBeam.Name),
+				"description":        fmt.Sprintf("%v - occupancy", *portalBeam.Name.Get()),
 				"subtype":            "input",
 			},
 		}
@@ -76,6 +76,10 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 		widget := api.Widget{
 			WidgetTypeName: "Kontakt.io Air Sensor",
 			AssetId:        airSensor.Id,
+			Details: map[string]interface{}{
+				"size":     1,
+				"timespan": 7,
+			},
 			Data: []api.WidgetData{
 				{
 					ElementSequence: nullableInt32(1),
@@ -133,6 +137,53 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 		}
 		dashboard.Widgets = append(dashboard.Widgets, widget)
 	}
+
+	floors, _, err := client.NewClient().AssetsApi.
+		GetAssets(client.AuthenticationContext()).
+		AssetTypeName(floorAssetType).
+		ProjectId(projectId).
+		Execute()
+	if err != nil {
+		return api.Dashboard{}, fmt.Errorf("fetching floor assets: %v", err)
+	}
+
+	floorsWidget := api.Widget{
+		WidgetTypeName: "Kontakt.io floor settings",
+		Details: map[string]interface{}{
+			"size":     1,
+			"timespan": 7,
+		},
+	}
+
+	for i, floor := range floors {
+		d := []api.WidgetData{
+			{
+				ElementSequence: nullableInt32(1),
+				AssetId:         floor.Id,
+				Data: map[string]interface{}{
+					"attribute":   "height",
+					"description": floor.Name,
+					"key":         "_SETPOINT",
+					"seq":         i,
+					"subtype":     "output",
+				},
+			},
+			{
+				ElementSequence: nullableInt32(1),
+				AssetId:         floor.Id,
+				Data: map[string]interface{}{
+					"attribute":   "height",
+					"description": floor.Name,
+					"key":         "_CURRENT",
+					"seq":         i,
+					"subtype":     "output",
+				},
+			},
+		}
+		floorsWidget.Data = append(floorsWidget.Data, d...)
+	}
+
+	dashboard.Widgets = append(dashboard.Widgets, floorsWidget)
 
 	return dashboard, nil
 }
