@@ -239,7 +239,6 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	}
 
 	for _, p := range positions {
-		// todo: Allow to modify the origin
 		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, floorAssetType+fmt.Sprint(p.FloorID))
 		if err != nil {
 			return nil, fmt.Errorf("finding floor %v (irrespectible of project): %v", p.FloorID, err)
@@ -254,7 +253,10 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 			log.Info("kontakt-io", "floor %v has no height set, assuming 0", floor.AssetID.Int32)
 			floorHeight = 0
 		}
-		p.WorldPosition = []float64{p.PositionX, p.PositionY, floorHeight}
+
+		x := p.PositionX - config.AbsoluteX
+		y := p.PositionY - config.AbsoluteY
+		p.WorldPosition = []float64{x, y, floorHeight}
 		if t, ok := tags[p.ID]; ok {
 			t.WorldPosition = p.WorldPosition
 			p = t

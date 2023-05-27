@@ -92,6 +92,8 @@ func dbConfigFromApiConfig(apiConfig apiserver.Configuration) (dbConfig appdb.Co
 	if apiConfig.ProjectIDs != nil {
 		dbConfig.ProjectIds = *apiConfig.ProjectIDs
 	}
+	dbConfig.AbsoluteX = apiConfig.AbsoluteX
+	dbConfig.AbsoluteY = apiConfig.AbsoluteY
 	return dbConfig, nil
 }
 
@@ -110,6 +112,8 @@ func apiConfigFromDbConfig(dbConfig *appdb.Configuration) (apiConfig apiserver.C
 	}
 	apiConfig.Active = dbConfig.Active.Ptr()
 	apiConfig.ProjectIDs = common.Ptr[[]string](dbConfig.ProjectIds)
+	apiConfig.AbsoluteX = dbConfig.AbsoluteX
+	apiConfig.AbsoluteY = dbConfig.AbsoluteY
 	return apiConfig, nil
 }
 

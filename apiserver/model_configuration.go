@@ -35,6 +35,12 @@ type Configuration struct {
 
 	// List of Eliona project ids for which this device should collect data. For each project id all smart devices are automatically created as an asset in Eliona. The mapping between Eliona is stored as an asset mapping in the Kontakt.io app.
 	ProjectIDs *[]string `json:"projectIDs,omitempty"`
+
+	// Position of Kontakt.io origin on Eliona coordinate system - X axis
+	AbsoluteX float64 `json:"absoluteX,omitempty"`
+
+	// Position of Kontakt.io origin on Eliona coordinate system - Y axis
+	AbsoluteY float64 `json:"absoluteY,omitempty"`
 }
 
 // AssertConfigurationRequired checks if the required fields are not zero-ed

@@ -20,8 +20,8 @@ create table if not exists kontakt_io.configuration
 (
 	id               bigserial primary key,
 	api_key          text,
-	absolute_x       integer not null default 0,
-	absolute_y       integer not null default 0,
+	absolute_x       float   not null default 0,
+	absolute_y       float   not null default 0,
 	refresh_interval integer not null default 60,
 	request_timeout  integer not null default 120,
 	asset_filter     json,

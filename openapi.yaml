@@ -194,7 +194,14 @@ components:
           example:
             - "42"
             - "99"
-
+        absoluteX:
+          type: double
+          description: Position of Kontakt.io origin on Eliona coordinate system - X axis
+          default: 0
+        absoluteY:
+          type: double
+          description: Position of Kontakt.io origin on Eliona coordinate system - Y axis
+          default: 0
     AssetFilter:
       type: array
       description: Array of rules combined by logical OR
