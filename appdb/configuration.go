@@ -27,8 +27,8 @@ import (
 type Configuration struct {
 	ID              int64             `boil:"id" json:"id" toml:"id" yaml:"id"`
 	APIKey          null.String       `boil:"api_key" json:"api_key,omitempty" toml:"api_key" yaml:"api_key,omitempty"`
-	AbsoluteX       int32             `boil:"absolute_x" json:"absolute_x" toml:"absolute_x" yaml:"absolute_x"`
-	AbsoluteY       int32             `boil:"absolute_y" json:"absolute_y" toml:"absolute_y" yaml:"absolute_y"`
+	AbsoluteX       float64           `boil:"absolute_x" json:"absolute_x" toml:"absolute_x" yaml:"absolute_x"`
+	AbsoluteY       float64           `boil:"absolute_y" json:"absolute_y" toml:"absolute_y" yaml:"absolute_y"`
 	RefreshInterval int32             `boil:"refresh_interval" json:"refresh_interval" toml:"refresh_interval" yaml:"refresh_interval"`
 	RequestTimeout  int32             `boil:"request_timeout" json:"request_timeout" toml:"request_timeout" yaml:"request_timeout"`
 	AssetFilter     null.JSON         `boil:"asset_filter" json:"asset_filter,omitempty" toml:"asset_filter" yaml:"asset_filter,omitempty"`
@@ -151,6 +151,35 @@ func (w whereHelpernull_String) NIN(slice []string) qm.QueryMod {
 func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
 func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
+type whereHelperfloat64 struct{ field string }
+
+func (w whereHelperfloat64) EQ(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperfloat64) NEQ(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelperfloat64) LT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperfloat64) LTE(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelperfloat64) GT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperfloat64) GTE(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelperfloat64) IN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperfloat64) NIN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
 type whereHelperint32 struct{ field string }
 
 func (w whereHelperint32) EQ(x int32) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
@@ -251,8 +280,8 @@ func (w whereHelpertypes_StringArray) IsNotNull() qm.QueryMod {
 var ConfigurationWhere = struct {
 	ID              whereHelperint64
 	APIKey          whereHelpernull_String
-	AbsoluteX       whereHelperint32
-	AbsoluteY       whereHelperint32
+	AbsoluteX       whereHelperfloat64
+	AbsoluteY       whereHelperfloat64
 	RefreshInterval whereHelperint32
 	RequestTimeout  whereHelperint32
 	AssetFilter     whereHelpernull_JSON
@@ -262,8 +291,8 @@ var ConfigurationWhere = struct {
 }{
 	ID:              whereHelperint64{field: "\"kontakt_io\".\"configuration\".\"id\""},
 	APIKey:          whereHelpernull_String{field: "\"kontakt_io\".\"configuration\".\"api_key\""},
-	AbsoluteX:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_x\""},
-	AbsoluteY:       whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"absolute_y\""},
+	AbsoluteX:       whereHelperfloat64{field: "\"kontakt_io\".\"configuration\".\"absolute_x\""},
+	AbsoluteY:       whereHelperfloat64{field: "\"kontakt_io\".\"configuration\".\"absolute_y\""},
 	RefreshInterval: whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"refresh_interval\""},
 	RequestTimeout:  whereHelperint32{field: "\"kontakt_io\".\"configuration\".\"request_timeout\""},
 	AssetFilter:     whereHelpernull_JSON{field: "\"kontakt_io\".\"configuration\".\"asset_filter\""},
