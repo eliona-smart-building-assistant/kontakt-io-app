@@ -128,7 +128,7 @@ func listenForOutputChanges() {
 		return
 	}
 	for output := range outputs {
-		// TODO: Filter for only own asset types. 
+		// TODO: Filter for only own asset types.
 		height, ok := output.Data["height"]
 		log.Info("output", "%+v\n%+v", output.Data, height)
 		if !ok {
