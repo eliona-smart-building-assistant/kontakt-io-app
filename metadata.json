@@ -10,10 +10,11 @@
     "de": "Die Kontakt.io-App ermöglicht den Zugriff auf Kontakt.io-Geräte."
   },
   "dashboardTemplateNames": [
-    "Kontakt.io devices"
+    "Kontakt.io sensors"
   ],
+  "apiUrl": "v1",
   "apiSpecificationPath": "/v1/version/openapi.json",
-  "documentationUrl": "https://doc.eliona.io/collection/eliona-apps/externe-apps/kontaktio",
+  "documentationUrl": "https://doc.eliona.io/collection/v/eliona-english/eliona-apps/external-apps/kontakt.io",
   "useEnvironment": [
     "CONNECTION_STRING",
     "API_ENDPOINT",
