@@ -67,7 +67,7 @@ Assets for all devices connected to the Kontakt.io account are created automatic
 
 To select which assets to create, a filter could be specified in config. The schema of the filter is defined in the `openapi.yaml` file.
 
-Possible filter parameters are the field names in the `kontaktio.Device` struct.
+Possible filter parameters are the field tags for`eliona` in the `kontaktio.deviceInfo` struct.
 
 ### Dashboard ###
 
