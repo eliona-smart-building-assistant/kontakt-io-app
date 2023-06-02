@@ -107,13 +107,13 @@ type Device struct {
 }
 
 type deviceInfo struct {
-	Model        string `json:"model"`
-	ID           string `json:"id"`
-	BatteryLevel int    `json:"batteryLevel"`
-	Product      string `json:"product"`
-	Name         string `json:"name"`
-	Mac          string `json:"mac"`
-	Firmware     string `json:"firmware"`
+	Model        string `json:"model" eliona:"model,filterable"`
+	ID           string `json:"id" eliona:"id,filterable"`
+	BatteryLevel int    `json:"batteryLevel" eliona:"battery_level,filterable"`
+	Product      string `json:"product" eliona:"product,filterable"`
+	Name         string `json:"name" eliona:"name,filterable"`
+	Mac          string `json:"mac" eliona:"mac,filterable"`
+	Firmware     string `json:"firmware" eliona:"firmware,filterable"`
 }
 
 type deviceResponse struct {
@@ -147,7 +147,7 @@ func fetchDevices(config apiserver.Configuration) (map[string]Device, error) {
 		if adheres, err := device.AdheresToFilter(config); err != nil {
 			return nil, fmt.Errorf("checking if device adheres to a device filter: %v", err)
 		} else if !adheres {
-			log.Debug("kontaktio", "Device %v skipped, does not adhere to asset filter.", device.Name)
+			log.Debug("kontaktio", "Device %v - %v skipped, does not adhere to asset filter.", device.Name, device.Product)
 			continue
 		}
 		uid := strings.ToLower(device.Mac)
@@ -274,7 +274,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 			// Response from kontakt.io support:
 			// In telemetry trackingID is always mac address of beacon or Portal Light.
 			// For Portal Lights you may see difference by +2. Basically BLE mac = WiFi mac + 2
-			log.Debug("kontakt-io", "A tracking ID was %v not matched with a device.", tag.ID)
+			log.Debug("kontakt-io", "A tracking ID %v was not matched with a device.", tag.ID)
 			continue
 		}
 		switch t.Product {
@@ -307,7 +307,7 @@ func (device *deviceInfo) AdheresToFilter(config apiserver.Configuration) (bool,
 	f := apiFilterToCommonFilter(config.AssetFilter)
 	fp, err := structToMap(device)
 	if err != nil {
-		return false, fmt.Errorf("converting strict to map: %v", err)
+		return false, fmt.Errorf("converting struct to map: %v", err)
 	}
 	adheres, err := common.Filter(f, fp)
 	if err != nil {
@@ -315,6 +315,8 @@ func (device *deviceInfo) AdheresToFilter(config apiserver.Configuration) (bool,
 	}
 	return adheres, nil
 }
+
+// To be moved to go-utils.
 
 func structToMap(input interface{}) (map[string]string, error) {
 	if input == nil {
@@ -335,13 +337,70 @@ func structToMap(input interface{}) (map[string]string, error) {
 
 	output := make(map[string]string)
 	for i := 0; i < inputValue.NumField(); i++ {
-		fieldValue := inputValue.Field(i)
 		fieldType := inputType.Field(i)
-		output[fieldType.Name] = fieldValue.String()
+
+		fieldTag, err := parseElionaTag(fieldType)
+		if err != nil {
+			return nil, err
+		}
+
+		if !fieldTag.Filterable {
+			continue
+		}
+
+		fieldValue := inputValue.Field(i)
+		output[fieldTag.ParamName] = fieldValue.String()
 	}
 
 	return output, nil
 }
+
+type SubType string
+
+const (
+	Status SubType = "status"
+	Info   SubType = "info"
+	Input  SubType = "input"
+	Output SubType = "output"
+)
+
+type FieldTag struct {
+	ParamName  string
+	SubType    SubType
+	Filterable bool
+}
+
+func parseElionaTag(field reflect.StructField) (*FieldTag, error) {
+	elionaTag := field.Tag.Get("eliona")
+	subtypeTag := field.Tag.Get("subtype")
+
+	elionaTagParts := strings.Split(elionaTag, ",")
+	if len(elionaTagParts) < 1 {
+		return nil, fmt.Errorf("invalid eliona tag on field %s", field.Name)
+	}
+
+	paramName := elionaTagParts[0]
+	filterable := len(elionaTagParts) > 1 && elionaTagParts[1] == "filterable"
+
+	var subType SubType
+	if subtypeTag != "" {
+		subType = SubType(subtypeTag)
+		switch subType {
+		case Status, Info, Input, Output:
+			// valid subtype
+		default:
+			return nil, fmt.Errorf("invalid subtype in eliona tag on field %s", field.Name)
+		}
+	}
+
+	return &FieldTag{
+		ParamName:  paramName,
+		SubType:    subType,
+		Filterable: filterable,
+	}, nil
+}
+
+// ^^ To be moved to go-utils.
 
 func apiFilterToCommonFilter(input [][]apiserver.FilterRule) [][]common.FilterRule {
 	result := make([][]common.FilterRule, len(input))

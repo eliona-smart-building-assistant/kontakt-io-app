@@ -13,7 +13,7 @@
     "Kontakt.io sensors"
   ],
   "apiUrl": "v1",
-  "apiSpecificationPath": "/v1/version/openapi.json",
+  "apiSpecificationPath": "/version/openapi.json",
   "documentationUrl": "https://doc.eliona.io/collection/v/eliona-english/eliona-apps/external-apps/kontakt.io",
   "useEnvironment": [
     "CONNECTION_STRING",
