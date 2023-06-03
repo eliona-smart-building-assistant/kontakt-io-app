@@ -92,3 +92,9 @@ For the database access [SQLBoiler](https://github.com/volatiletech/sqlboiler) i
 .\generate-db.cmd # Windows
 ./generate-db.sh # Linux
 ```
+
+## Further development
+
+### Badge buttons ###
+
+Kontakt.io Smart Badge and Asst Tag 2 have two buttons which could trigger events or provide click counts. If there is any use case for using these in ELiona, it will be possible to implement.
