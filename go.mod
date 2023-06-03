@@ -5,9 +5,10 @@ go 1.20
 require (
 	github.com/eliona-smart-building-assistant/go-eliona v1.9.6
 	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.4.20
-	github.com/eliona-smart-building-assistant/go-utils v1.0.23
+	github.com/eliona-smart-building-assistant/go-utils v1.0.25
 	github.com/friendsofgo/errors v0.9.2
 	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/websocket v1.5.0
 	github.com/volatiletech/null/v8 v8.1.2
 	github.com/volatiletech/sqlboiler/v4 v4.14.2
 	github.com/volatiletech/strmangle v0.0.4
@@ -21,7 +22,6 @@ replace github.com/ericlagergren/decimal => github.com/ericlagergren/decimal v0.
 require (
 	github.com/ericlagergren/decimal v0.0.0-20221120152707-495c53812d05 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
