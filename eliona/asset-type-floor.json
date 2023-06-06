@@ -8,7 +8,8 @@
 				"de": "Höhe über Grund",
 				"en": "Height above ground"
 			},
-			"type": "device-info"
+			"type": "device-info",
+			"unit": "m"
 		}
 	],
 	"custom": true,

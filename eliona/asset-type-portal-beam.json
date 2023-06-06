@@ -28,7 +28,8 @@
 				"de": "Batteriestand",
 				"en": "Battery Level"
 			},
-			"type": "battery-voltage"
+			"type": "battery-voltage",
+			"unit": "%"
 		},
 		{
 			"enable": true,
@@ -38,7 +39,8 @@
 				"de": "Luftfeuchtigkeit",
 				"en": "Humidity"
 			},
-			"type": "humidity"
+			"type": "humidity",
+			"unit": "%"
 		},
 		{
 			"enable": true,
@@ -58,7 +60,8 @@
 				"de": "Temperatur",
 				"en": "Temperature"
 			},
-			"type": "temperature"
+			"type": "temperature",
+			"unit": "˚C"
 		},
 		{
 			"enable": true,
