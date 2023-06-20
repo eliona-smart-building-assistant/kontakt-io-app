@@ -18,9 +18,9 @@ package kontaktio
 import (
 	"context"
 	"fmt"
+	"github.com/eliona-smart-building-assistant/go-eliona/utils"
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
-	"kontakt-io/eliona"
 	"net/url"
 	"strings"
 	"time"
@@ -29,6 +29,16 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/http"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
+
+const TagAssetType = "kontakt_io_tag"
+const BadgeAssetType = "kontakt_io_badge"
+const BeaconAssetType = "kontakt_io_beacon"
+const PortalBeamAssetType = "kontakt_io_portal_beam"
+const RoomAssetType = "kontakt_io_room"
+const FloorAssetType = "kontakt_io_floor"
+const BuildingAssetType = "kontakt_io_building"
+
+const RootAssetType = "kontakt_io_root"
 
 const productAnchorBeacon = "Anchor Beacon 2"
 const productAssetTag = "Asset Tag 2"
@@ -230,7 +240,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	}
 
 	for _, p := range positions {
-		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, eliona.FloorAssetType+fmt.Sprint(p.FloorID))
+		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, FloorAssetType+fmt.Sprint(p.FloorID))
 		if err != nil {
 			return nil, fmt.Errorf("finding floor %v (irrespectible of project): %v", p.FloorID, err)
 		}
@@ -270,13 +280,13 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 		}
 		switch t.Product {
 		case productSmartBadge, productAssetTag:
-			tag.Type = eliona.BadgeAssetType
+			tag.Type = BadgeAssetType
 		case productNanoTag:
-			tag.Type = eliona.TagAssetType
+			tag.Type = TagAssetType
 		case productAnchorBeacon, productPuckBeacon:
-			tag.Type = eliona.BeaconAssetType
+			tag.Type = BeaconAssetType
 		case productPortalBeam:
-			tag.Type = eliona.PortalBeamAssetType
+			tag.Type = PortalBeamAssetType
 		case productPortalLight:
 			// Provides no valuable information.
 			continue
@@ -296,7 +306,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 
 func (device *deviceInfo) AdheresToFilter(config apiserver.Configuration) (bool, error) {
 	f := apiFilterToCommonFilter(config.AssetFilter)
-	fp, err := structToMap(device)
+	fp, err := utils.StructToMap(device)
 	if err != nil {
 		return false, fmt.Errorf("converting struct to map: %v", err)
 	}

@@ -17,6 +17,7 @@ package eliona
 
 import (
 	"fmt"
+	kontaktio "kontakt-io/kontakt-io"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
 	"github.com/eliona-smart-building-assistant/go-eliona/client"
@@ -31,7 +32,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	beacons, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(BeaconAssetType).
+		AssetTypeName(kontaktio.BeaconAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {
@@ -40,7 +41,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	portalBeams, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(PortalBeamAssetType).
+		AssetTypeName(kontaktio.PortalBeamAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {
@@ -140,7 +141,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	floors, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(FloorAssetType).
+		AssetTypeName(kontaktio.FloorAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {
