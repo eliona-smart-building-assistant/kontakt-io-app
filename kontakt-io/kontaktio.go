@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
+	"kontakt-io/eliona"
 	"net/url"
 	"strings"
 	"time"
@@ -28,15 +29,6 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/http"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
-
-// Keep in sync with ../eliona/assets.go
-const tagAssetType = "kontakt_io_tag"
-const badgeAssetType = "kontakt_io_badge"
-const beaconAssetType = "kontakt_io_beacon"
-const portalBeamAssetType = "kontakt_io_portal_beam"
-const roomAssetType = "kontakt_io_room"
-const floorAssetType = "kontakt_io_floor"
-const buildingAssetType = "kontakt_io_building"
 
 const productAnchorBeacon = "Anchor Beacon 2"
 const productAssetTag = "Asset Tag 2"
@@ -238,7 +230,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	}
 
 	for _, p := range positions {
-		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, floorAssetType+fmt.Sprint(p.FloorID))
+		f, err := conf.GetLocationIrrespectibleOfProject(context.Background(), config, eliona.FloorAssetType+fmt.Sprint(p.FloorID))
 		if err != nil {
 			return nil, fmt.Errorf("finding floor %v (irrespectible of project): %v", p.FloorID, err)
 		}
@@ -278,13 +270,13 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 		}
 		switch t.Product {
 		case productSmartBadge, productAssetTag:
-			tag.Type = badgeAssetType
+			tag.Type = eliona.BadgeAssetType
 		case productNanoTag:
-			tag.Type = tagAssetType
+			tag.Type = eliona.TagAssetType
 		case productAnchorBeacon, productPuckBeacon:
-			tag.Type = beaconAssetType
+			tag.Type = eliona.BeaconAssetType
 		case productPortalBeam:
-			tag.Type = portalBeamAssetType
+			tag.Type = eliona.PortalBeamAssetType
 		case productPortalLight:
 			// Provides no valuable information.
 			continue

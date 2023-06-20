@@ -31,7 +31,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	beacons, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(beaconAssetType).
+		AssetTypeName(BeaconAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {
@@ -40,7 +40,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	portalBeams, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(portalBeamAssetType).
+		AssetTypeName(PortalBeamAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {
@@ -140,7 +140,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 
 	floors, _, err := client.NewClient().AssetsApi.
 		GetAssets(client.AuthenticationContext()).
-		AssetTypeName(floorAssetType).
+		AssetTypeName(FloorAssetType).
 		ProjectId(projectId).
 		Execute()
 	if err != nil {

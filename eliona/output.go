@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Generates a websocket connection to the database and listens for any updates
+// ListenForOutputChanges generates a websocket connection to the database and listens for any updates
 // on assets (only output attributes). Returns a channel with all changes.
 func ListenForOutputChanges() (chan api.Data, error) {
 	reconnectTime, _ := time.ParseDuration("1s")

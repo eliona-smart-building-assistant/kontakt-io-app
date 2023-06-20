@@ -28,23 +28,22 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
-// Keep in sync with ../kontakt-io/kontaktio.go
-const tagAssetType = "kontakt_io_tag"
-const badgeAssetType = "kontakt_io_badge"
-const beaconAssetType = "kontakt_io_beacon"
-const portalBeamAssetType = "kontakt_io_portal_beam"
-const roomAssetType = "kontakt_io_room"
-const floorAssetType = "kontakt_io_floor"
-const buildingAssetType = "kontakt_io_building"
+const TagAssetType = "kontakt_io_tag"
+const BadgeAssetType = "kontakt_io_badge"
+const BeaconAssetType = "kontakt_io_beacon"
+const PortalBeamAssetType = "kontakt_io_portal_beam"
+const RoomAssetType = "kontakt_io_room"
+const FloorAssetType = "kontakt_io_floor"
+const BuildingAssetType = "kontakt_io_building"
 
-const rootAssetType = "kontakt_io_root"
+const RootAssetType = "kontakt_io_root"
 
 func isLocation(assetType string) bool {
-	return assetType == roomAssetType || assetType == floorAssetType || assetType == buildingAssetType
+	return assetType == RoomAssetType || assetType == FloorAssetType || assetType == BuildingAssetType
 }
 
 func isTracker(assetType string) bool {
-	return assetType == tagAssetType || assetType == badgeAssetType
+	return assetType == TagAssetType || assetType == BadgeAssetType
 }
 
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
@@ -66,20 +65,20 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
-		rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, rootAssetType, "Kontakt.io")
+		rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, RootAssetType, "Kontakt.io")
 		if err != nil {
 			return err
 		}
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, buildingAssetType, room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, BuildingAssetType, room.Floor.Building.Name)
 			if err != nil {
 				return err
 			}
-			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, floorAssetType, room.Floor.Name)
+			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, FloorAssetType, room.Floor.Name)
 			if err != nil {
 				return err
 			}
-			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, roomAssetType, room.Name); err != nil {
+			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, RoomAssetType, room.Name); err != nil {
 				return err
 			}
 		}
