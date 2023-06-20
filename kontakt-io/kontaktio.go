@@ -21,7 +21,6 @@ import (
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	"net/url"
-	"reflect"
 	"strings"
 	"time"
 
@@ -72,14 +71,14 @@ type locationsResponse struct {
 }
 
 func GetRooms(config apiserver.Configuration) ([]Room, error) {
-	url := "https://apps.cloud.us.kontakt.io/v2/locations/rooms?size=2000"
-	r, err := http.NewRequestWithApiKey(url, "API-Key", config.ApiKey)
+	u := "https://apps.cloud.us.kontakt.io/v2/locations/rooms?size=2000"
+	r, err := http.NewRequestWithApiKey(u, "API-Key", config.ApiKey)
 	if err != nil {
-		return nil, fmt.Errorf("creating request to %s: %v", url, err)
+		return nil, fmt.Errorf("creating request to %s: %v", u, err)
 	}
 	locationsResponse, err := http.Read[locationsResponse](r, time.Duration(*config.RequestTimeout)*time.Second, false)
 	if err != nil {
-		return nil, fmt.Errorf("reading response from %s: %v", url, err)
+		return nil, fmt.Errorf("reading response from %s: %v", u, err)
 	}
 	return locationsResponse.Content, nil
 }
@@ -315,92 +314,6 @@ func (device *deviceInfo) AdheresToFilter(config apiserver.Configuration) (bool,
 	}
 	return adheres, nil
 }
-
-// To be moved to go-utils.
-
-func structToMap(input interface{}) (map[string]string, error) {
-	if input == nil {
-		return nil, fmt.Errorf("input is nil")
-	}
-
-	inputValue := reflect.ValueOf(input)
-	inputType := reflect.TypeOf(input)
-
-	if inputValue.Kind() == reflect.Ptr {
-		inputValue = inputValue.Elem()
-		inputType = inputType.Elem()
-	}
-
-	if inputValue.Kind() != reflect.Struct {
-		return nil, fmt.Errorf("input is not a struct")
-	}
-
-	output := make(map[string]string)
-	for i := 0; i < inputValue.NumField(); i++ {
-		fieldType := inputType.Field(i)
-
-		fieldTag, err := parseElionaTag(fieldType)
-		if err != nil {
-			return nil, err
-		}
-
-		if !fieldTag.Filterable {
-			continue
-		}
-
-		fieldValue := inputValue.Field(i)
-		output[fieldTag.ParamName] = fieldValue.String()
-	}
-
-	return output, nil
-}
-
-type SubType string
-
-const (
-	Status SubType = "status"
-	Info   SubType = "info"
-	Input  SubType = "input"
-	Output SubType = "output"
-)
-
-type FieldTag struct {
-	ParamName  string
-	SubType    SubType
-	Filterable bool
-}
-
-func parseElionaTag(field reflect.StructField) (*FieldTag, error) {
-	elionaTag := field.Tag.Get("eliona")
-	subtypeTag := field.Tag.Get("subtype")
-
-	elionaTagParts := strings.Split(elionaTag, ",")
-	if len(elionaTagParts) < 1 {
-		return nil, fmt.Errorf("invalid eliona tag on field %s", field.Name)
-	}
-
-	paramName := elionaTagParts[0]
-	filterable := len(elionaTagParts) > 1 && elionaTagParts[1] == "filterable"
-
-	var subType SubType
-	if subtypeTag != "" {
-		subType = SubType(subtypeTag)
-		switch subType {
-		case Status, Info, Input, Output:
-			// valid subtype
-		default:
-			return nil, fmt.Errorf("invalid subtype in eliona tag on field %s", field.Name)
-		}
-	}
-
-	return &FieldTag{
-		ParamName:  paramName,
-		SubType:    subType,
-		Filterable: filterable,
-	}, nil
-}
-
-// ^^ To be moved to go-utils.
 
 func apiFilterToCommonFilter(input [][]apiserver.FilterRule) [][]common.FilterRule {
 	result := make([][]common.FilterRule, len(input))

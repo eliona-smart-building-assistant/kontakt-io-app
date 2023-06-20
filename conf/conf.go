@@ -20,13 +20,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"kontakt-io/apiserver"
-	"kontakt-io/appdb"
-	"strconv"
-
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
+	"kontakt-io/apiserver"
+	"kontakt-io/appdb"
 )
 
 var ErrBadRequest = errors.New("bad request")
@@ -142,14 +140,13 @@ func SetFloorHeight(assetId int32, height float64) error {
 		appdb.LocationColumns.FloorHeight: height,
 	})
 	if err != nil {
-		return fmt.Errorf("fetching location with assetId %v: %v", assetId,  err)
+		return fmt.Errorf("fetching location with assetId %v: %v", assetId, err)
 	}
 	if dbLocations == 0 {
 		return fmt.Errorf("no location with assetId %v found", assetId)
 	}
 	return nil
 }
-
 
 func GetLocationIrrespectibleOfProject(ctx context.Context, config apiserver.Configuration, locationId string) (*appdb.Location, error) {
 	dbLocations, err := appdb.Locations(
@@ -181,20 +178,6 @@ func InsertLocation(ctx context.Context, config apiserver.Configuration, projId 
 	dbLocation.GlobalAssetID = globalAssetID
 	dbLocation.AssetID = null.Int32From(assetId)
 	return dbLocation.InsertG(ctx, boil.Infer())
-}
-
-func GetDeviceId(ctx context.Context, assetID int32) (int, error) {
-	dbTag, err := appdb.Tags(
-		appdb.TagWhere.AssetID.EQ(null.Int32From(assetID)),
-	).OneG(ctx)
-	if err != nil {
-		return 0, err
-	}
-	id, err := strconv.Atoi(dbTag.GlobalAssetID)
-	if err != nil {
-		return 0, fmt.Errorf("parsing id %s: %v", dbTag.GlobalAssetID, err)
-	}
-	return id, nil
 }
 
 func GetTagAssetId(ctx context.Context, config apiserver.Configuration, projId string, deviceId string) (*int32, error) {
@@ -239,10 +222,4 @@ func IsConfigActive(config apiserver.Configuration) bool {
 
 func IsConfigEnabled(config apiserver.Configuration) bool {
 	return config.Enable == nil || *config.Enable
-}
-
-func SetAllConfigsInactive(ctx context.Context) (int64, error) {
-	return appdb.Configurations().UpdateAllG(ctx, appdb.M{
-		appdb.ConfigurationColumns.Active: false,
-	})
 }
