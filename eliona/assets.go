@@ -55,7 +55,7 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
-		rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, kontaktio.RootAssetType, "Kontakt.io")
+		rootAssetID, err := createRootAssetIfNecessary(config, projectId)
 		if err != nil {
 			return err
 		}
@@ -78,14 +78,23 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 
 func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kontaktio.Device) error {
 	for _, projectId := range conf.ProjIds(config) {
+		rootAssetID, err := createRootAssetIfNecessary(config, projectId)
+		if err != nil {
+			return err
+		}
 		for _, device := range devices {
-			_, err := createAssetIfNecessary(config, projectId, device.ID, nil, device.Type, device.Name)
+			_, err := createAssetIfNecessary(config, projectId, device.ID, &rootAssetID, device.Type, device.Name)
 			if err != nil {
 				return err
 			}
 		}
 	}
 	return nil
+}
+
+func createRootAssetIfNecessary(config apiserver.Configuration, projectId string) (int32, error) {
+	rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, kontaktio.RootAssetType, "Kontakt.io")
+	return rootAssetID, err
 }
 
 type assetData struct {
