@@ -45,14 +45,22 @@ func collectData() {
 		// Skip config if disabled and set inactive
 		if !conf.IsConfigEnabled(config) {
 			if conf.IsConfigActive(config) {
-				conf.SetConfigActiveState(context.Background(), config, false)
+				_, err := conf.SetConfigActiveState(context.Background(), config, false)
+				if err != nil {
+					log.Fatal("conf", "Couldn't set config active state to DB: %v", err)
+					return
+				}
 			}
 			continue
 		}
 
 		// Signals that this config is active
 		if !conf.IsConfigActive(config) {
-			conf.SetConfigActiveState(context.Background(), config, true)
+			_, err := conf.SetConfigActiveState(context.Background(), config, true)
+			if err != nil {
+				log.Fatal("conf", "Couldn't set config active state to DB: %v", err)
+				return
+			}
 			log.Info("conf", "Collecting initialized with Configuration %d:\n"+
 				"API Key: %s\n"+
 				"Enable: %t\n"+

@@ -69,7 +69,7 @@ type roomInfoDataPayload struct{}
 
 func upsertRoomData(config apiserver.Configuration, projectId string, room kontaktio.Room) error {
 	log.Debug("Eliona", "upserting data for room: config %d and room '%v'", config.Id, room.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, roomAssetType+fmt.Sprint(room.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, kontaktio.RoomAssetType+fmt.Sprint(room.ID))
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ type floorInfoDataPayload struct{}
 
 func upsertFloorData(config apiserver.Configuration, projectId string, floor kontaktio.Floor) error {
 	log.Debug("Eliona", "upserting data for floor: config %d and floor '%v'", config.Id, floor.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, floorAssetType+fmt.Sprint(floor.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, kontaktio.FloorAssetType+fmt.Sprint(floor.ID))
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ type buildingInfoDataPayload struct{}
 
 func upsertBuildingData(config apiserver.Configuration, projectId string, building kontaktio.Building) error {
 	log.Debug("Eliona", "upserting data for building: config %d and building '%v'", config.Id, building.ID)
-	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, buildingAssetType+fmt.Sprint(building.ID))
+	assetId, err := conf.GetLocationAssetId(context.Background(), config, projectId, kontaktio.BuildingAssetType+fmt.Sprint(building.ID))
 	if err != nil {
 		return err
 	}
@@ -205,11 +205,11 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 
 	var inputData any
 	switch device.Type {
-	case tagAssetType:
+	case kontaktio.TagAssetType:
 		inputData = tagInputDataPayload{
 			WorldPosition: device.WorldPosition,
 		}
-	case beaconAssetType:
+	case kontaktio.BeaconAssetType:
 		inputData = beaconInputDataPayload{
 			Humidity:       fmt.Sprint(device.Humidity),
 			LightIntensity: fmt.Sprint(device.LightIntensity),
@@ -217,7 +217,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 			AirQuality:     fmt.Sprint(device.AirQuality),
 			AirPressure:    fmt.Sprint(device.AirPressure),
 		}
-	case portalBeamAssetType:
+	case kontaktio.PortalBeamAssetType:
 		inputData = portalBeamInputDataPayload{
 			Humidity:       fmt.Sprint(device.Humidity),
 			LightIntensity: fmt.Sprint(device.LightIntensity),
@@ -226,7 +226,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 			AirPressure:    fmt.Sprint(device.AirPressure),
 			PeopleCount:    fmt.Sprint(device.PeopleCount),
 		}
-	case badgeAssetType:
+	case kontaktio.BadgeAssetType:
 		inputData = badgeInputDataPayload{
 			WorldPosition: device.WorldPosition,
 			Temperature:   fmt.Sprint(device.Temperature),
@@ -239,8 +239,6 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 	}
 	return nil
 }
-
-//
 
 func upsertData(subtype api.DataSubtype, assetId int32, payload any) error {
 	var statusData api.Data

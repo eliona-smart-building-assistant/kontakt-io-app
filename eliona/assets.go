@@ -28,23 +28,12 @@ import (
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
-// Keep in sync with ../kontakt-io/kontaktio.go
-const tagAssetType = "kontakt_io_tag"
-const badgeAssetType = "kontakt_io_badge"
-const beaconAssetType = "kontakt_io_beacon"
-const portalBeamAssetType = "kontakt_io_portal_beam"
-const roomAssetType = "kontakt_io_room"
-const floorAssetType = "kontakt_io_floor"
-const buildingAssetType = "kontakt_io_building"
-
-const rootAssetType = "kontakt_io_root"
-
 func isLocation(assetType string) bool {
-	return assetType == roomAssetType || assetType == floorAssetType || assetType == buildingAssetType
+	return assetType == kontaktio.RoomAssetType || assetType == kontaktio.FloorAssetType || assetType == kontaktio.BuildingAssetType
 }
 
 func isTracker(assetType string) bool {
-	return assetType == tagAssetType || assetType == badgeAssetType
+	return assetType == kontaktio.TagAssetType || assetType == kontaktio.BadgeAssetType
 }
 
 func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
@@ -66,20 +55,20 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 
 func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kontaktio.Room) error {
 	for _, projectId := range conf.ProjIds(config) {
-		rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, rootAssetType, "Kontakt.io")
+		rootAssetID, err := createRootAssetIfNecessary(config, projectId)
 		if err != nil {
 			return err
 		}
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, buildingAssetType, room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, kontaktio.BuildingAssetType, room.Floor.Building.Name)
 			if err != nil {
 				return err
 			}
-			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, floorAssetType, room.Floor.Name)
+			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, kontaktio.FloorAssetType, room.Floor.Name)
 			if err != nil {
 				return err
 			}
-			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, roomAssetType, room.Name); err != nil {
+			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, kontaktio.RoomAssetType, room.Name); err != nil {
 				return err
 			}
 		}
@@ -89,14 +78,23 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 
 func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kontaktio.Device) error {
 	for _, projectId := range conf.ProjIds(config) {
+		rootAssetID, err := createRootAssetIfNecessary(config, projectId)
+		if err != nil {
+			return err
+		}
 		for _, device := range devices {
-			_, err := createAssetIfNecessary(config, projectId, device.ID, nil, device.Type, device.Name)
+			_, err := createAssetIfNecessary(config, projectId, device.ID, &rootAssetID, device.Type, device.Name)
 			if err != nil {
 				return err
 			}
 		}
 	}
 	return nil
+}
+
+func createRootAssetIfNecessary(config apiserver.Configuration, projectId string) (int32, error) {
+	rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, kontaktio.RootAssetType, "Kontakt.io")
+	return rootAssetID, err
 }
 
 type assetData struct {
