@@ -3,7 +3,7 @@ module kontakt-io
 go 1.20
 
 require (
-	github.com/eliona-smart-building-assistant/go-eliona v1.9.7-0.20230620115441-5a6c844cf7b8
+	github.com/eliona-smart-building-assistant/go-eliona v1.9.7
 	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.4.20
 	github.com/eliona-smart-building-assistant/go-utils v1.0.29
 	github.com/friendsofgo/errors v0.9.2
