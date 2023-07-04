@@ -11,6 +11,6 @@ func TestMain(m *testing.M) {
 	docker.RunApp(m)
 }
 
-func TestApp(t *testing.T) {
+func TestAppWorks(t *testing.T) {
 	assert.AppWorks(t)
 }
