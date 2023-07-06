@@ -21,9 +21,14 @@ jobs:
         run: |
           until nc -z 127.17.0.1 3000; do sleep 1; done
 
+      - name: Install dependencies
+        run: go get .
+      
+      - name: Build
+        run: go build -v .
+        
       - name: Run integration test
-        run: |
-          go test -run TestApp
+        run: go test -v -run TestApp
         env:
           CONNECTION_STRING: postgres://postgres:secret@127.17.0.1:5432?sslmode=disable
           API_ENDPOINT: http://127.17.0.1:3000/v2
