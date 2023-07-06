@@ -3,7 +3,7 @@ module kontakt-io
 go 1.20
 
 require (
-	github.com/eliona-smart-building-assistant/app-integration-tests v0.0.4
+	github.com/eliona-smart-building-assistant/app-integration-tests v0.0.5-0.20230706091716-df8ecaeabc84
 	github.com/eliona-smart-building-assistant/go-eliona v1.9.7
 	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.4.20
 	github.com/eliona-smart-building-assistant/go-utils v1.0.30
@@ -21,6 +21,7 @@ require (
 replace github.com/ericlagergren/decimal => github.com/ericlagergren/decimal v0.0.0-20181231230500-73749d4874d5
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ericlagergren/decimal v0.0.0-20221120152707-495c53812d05 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -33,6 +34,7 @@ require (
 	github.com/jackc/pgx/v4 v4.18.1 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/volatiletech/inflect v0.0.1 // indirect
