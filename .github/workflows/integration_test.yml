@@ -4,9 +4,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker_unit_test:
-    runs-on: ubuntu-latest
-
-    steps:   
-      - name: Integration Test
-        uses: eliona-smart-building-assistant/app-integration-tests/.github/workflows/app-integration-tests.yml@main
+  app-integration-test:
+    uses: eliona-smart-building-assistant/app-integration-tests/.github/workflows/app-integration-test.yml@main
