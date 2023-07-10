@@ -7,11 +7,6 @@ jobs:
   docker_unit_test:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2    
-    
+    steps:   
       - name: Integration Test
-        uses: eliona-smart-building-assistant/app-integration-tests@main
-        with:
-          path: .github/workflows/app_integration_test.yml
+        uses: eliona-smart-building-assistant/app-integration-tests/.github/workflows/app-integration-tests.yml@main@main
