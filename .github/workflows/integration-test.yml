@@ -8,3 +8,4 @@ on:
 jobs:
   app-integration-test:
     uses: eliona-smart-building-assistant/app-integration-tests/.github/workflows/app-integration-test.yml@main
+    secrets: inherit
