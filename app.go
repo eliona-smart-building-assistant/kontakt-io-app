@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
+	utilshttp "github.com/eliona-smart-building-assistant/go-utils/http"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
 
@@ -152,10 +153,12 @@ func listenForOutputChanges() {
 
 // listenApi starts the API server and listen for requests
 func listenApi() {
-	err := http.ListenAndServe(":"+common.Getenv("API_SERVER_PORT", "3000"), apiserver.NewRouter(
-		apiserver.NewConfigurationApiController(apiservices.NewConfigurationApiService()),
-		apiserver.NewVersionApiController(apiservices.NewVersionApiService()),
-		apiserver.NewCustomizationApiController(apiservices.NewCustomizationApiService()),
-	))
+	err := http.ListenAndServe(":"+common.Getenv("API_SERVER_PORT", "3000"), utilshttp.NewCORSEnabledHandler(
+		apiserver.NewRouter(
+			apiserver.NewConfigurationApiController(apiservices.NewConfigurationApiService()),
+			apiserver.NewVersionApiController(apiservices.NewVersionApiService()),
+			apiserver.NewCustomizationApiController(apiservices.NewCustomizationApiService()),
+		)),
+	)
 	log.Fatal("main", "API server: %v", err)
 }
