@@ -46,7 +46,7 @@ The app requires configuration data that remains in the database. To do this, th
 
 The app provides its own API to access configuration data and other functions. The full description of the API is defined in the `openapi.yaml` OpenAPI definition file.
 
-- [API Reference](https://eliona-smart-building-assistant.github.io/open-api-docs/?https://raw.githubusercontent.com/eliona-smart-building-assistant/app-template/develop/openapi.yaml) shows Details of the API
+- [API Reference](https://eliona-smart-building-assistant.github.io/open-api-docs/?https://raw.githubusercontent.com/eliona-smart-building-assistant/app-template/develop/openapi.yaml) shows details of the API
 
 **Generation**: to generate api server stub see Generation section below.
 
@@ -55,7 +55,7 @@ The app provides its own API to access configuration data and other functions. T
 
 This app creates Eliona asset types and attribute sets during initialization.
 
-The data is written for each KentixONE device, structured into different subtypes of Elinoa assets. The following subtypes are defined:
+The data is written for each Kontakt.io device, structured into different subtypes of Eliona assets. The following subtypes are defined:
 
 - `Info`: Static data which provides information about a device like address and firmware info.
 - `Status`: Device status information, like battery level.
@@ -67,7 +67,7 @@ Assets for all devices connected to the Kontakt.io account are created automatic
 
 To select which assets to create, a filter could be specified in config. The schema of the filter is defined in the `openapi.yaml` file.
 
-Possible filter parameters are the field tags for`eliona` in the `kontaktio.deviceInfo` struct.
+Possible filter parameters are the field tags for `eliona` in the `kontaktio.deviceInfo` struct.
 
 ### Dashboard ###
 
