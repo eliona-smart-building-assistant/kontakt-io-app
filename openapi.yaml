@@ -21,7 +21,7 @@ info:
   description: API to access and configure the Kontakt.io App
 externalDocs:
   description: Find out more about the Kontakt.io App
-  url: https://github.com/eliona-smart-building-assistant/kontakt.io-app/
+  url: https://doc.eliona.io/collection/v/eliona-english/eliona-apps/external-apps/kontakt.io
 servers:
   - url: http://kontakt-io/v1
 
