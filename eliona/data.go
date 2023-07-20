@@ -21,6 +21,7 @@ import (
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	kontaktio "kontakt-io/kontakt-io"
+	"math"
 	"time"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
@@ -213,7 +214,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		inputData = beaconInputDataPayload{
 			Humidity:       fmt.Sprint(device.Humidity),
 			LightIntensity: fmt.Sprint(device.LightIntensity),
-			Temperature:    fmt.Sprint(device.Temperature),
+			Temperature:    fmt.Sprint(math.Round(device.Temperature*10) / 10),
 			AirQuality:     fmt.Sprint(device.AirQuality),
 			AirPressure:    fmt.Sprint(device.AirPressure),
 		}
@@ -221,7 +222,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		inputData = portalBeamInputDataPayload{
 			Humidity:       fmt.Sprint(device.Humidity),
 			LightIntensity: fmt.Sprint(device.LightIntensity),
-			Temperature:    fmt.Sprint(device.Temperature),
+			Temperature:    fmt.Sprint(math.Round(device.Temperature*10) / 10),
 			AirQuality:     fmt.Sprint(device.AirQuality),
 			AirPressure:    fmt.Sprint(device.AirPressure),
 			PeopleCount:    fmt.Sprint(device.PeopleCount),
@@ -229,7 +230,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 	case kontaktio.BadgeAssetType:
 		inputData = badgeInputDataPayload{
 			WorldPosition: device.WorldPosition,
-			Temperature:   fmt.Sprint(device.Temperature),
+			Temperature:   fmt.Sprint(math.Round(device.Temperature*10) / 10),
 		}
 	default:
 		return fmt.Errorf("unknown asset type \"%s\"", device.Type)
