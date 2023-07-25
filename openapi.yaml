@@ -21,7 +21,7 @@ info:
   description: API to access and configure the Kontakt.io App
 externalDocs:
   description: Find out more about the Kontakt.io App
-  url: https://github.com/eliona-smart-building-assistant/kontakt.io-app/
+  url: https://doc.eliona.io/collection/v/eliona-english/eliona-apps/external-apps/kontakt.io
 servers:
   - url: http://kontakt-io/v1
 
@@ -76,6 +76,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Configuration"
+
+  /configs/{config-id}:
+    get:
+      tags:
+        - Configuration
+      summary: Get configuration
+      description: Gets information about the configuration with the given id
+      parameters:
+        - $ref: "#/components/parameters/config-id"
+      operationId: getConfigurationById
+      responses:
+        "200":
+          description: Successfully returned configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Configuration"
+        "400":
+          description: Bad request
+    put:
+      tags:
+        - Configuration
+      summary: Updates a configuration
+      description: Updates a configuration
+      parameters:
+        - $ref: "#/components/parameters/config-id"
+      operationId: putConfigurationById
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Configuration"
+      responses:
+        "200":
+          description: Successfully updated a configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Configuration"
+    delete:
+      tags:
+        - Configuration
+      summary: Deletes a configuration
+      description: Removes information about the configuration with the given id
+      parameters:
+        - $ref: "#/components/parameters/config-id"
+      operationId: deleteConfigurationById
+      responses:
+        "204":
+          description: Successfully deleted configured configuration
+        "400":
+          description: Bad request
 
   /version:
     get:
@@ -143,6 +195,18 @@ paths:
           description: Template name not found
 
 components:
+  parameters:
+    config-id:
+      name: config-id
+      in: path
+      description: The id of the config
+      example: 4711
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 4711
+
   schemas:
     Configuration:
       type: object
