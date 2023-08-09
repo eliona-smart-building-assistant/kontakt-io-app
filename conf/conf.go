@@ -20,11 +20,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"kontakt-io/apiserver"
+	"kontakt-io/appdb"
+
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
-	"kontakt-io/apiserver"
-	"kontakt-io/appdb"
 )
 
 var ErrBadRequest = errors.New("bad request")
@@ -45,7 +46,7 @@ func GetConfig(ctx context.Context, configID int64) (*apiserver.Configuration, e
 		appdb.ConfigurationWhere.ID.EQ(configID),
 	).OneG(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("fetching config from database")
+		return nil, fmt.Errorf("fetching config from database: %v", err)
 	}
 	if dbConfig == nil {
 		return nil, ErrBadRequest
@@ -58,11 +59,21 @@ func GetConfig(ctx context.Context, configID int64) (*apiserver.Configuration, e
 }
 
 func DeleteConfig(ctx context.Context, configID int64) error {
+	if _, err := appdb.Locations(
+		appdb.LocationWhere.ConfigurationID.EQ(configID),
+	).DeleteAllG(ctx); err != nil {
+		return fmt.Errorf("deleting locations from database: %v", err)
+	}
+	if _, err := appdb.Tags(
+		appdb.TagWhere.ConfigurationID.EQ(configID),
+	).DeleteAllG(ctx); err != nil {
+		return fmt.Errorf("deleting tags from database: %v", err)
+	}
 	count, err := appdb.Configurations(
 		appdb.ConfigurationWhere.ID.EQ(configID),
 	).DeleteAllG(ctx)
 	if err != nil {
-		return fmt.Errorf("fetching config from database")
+		return fmt.Errorf("fetching config from database: %v", err)
 	}
 	if count > 1 {
 		return fmt.Errorf("shouldn't happen: deleted more (%v) configs by ID", count)
