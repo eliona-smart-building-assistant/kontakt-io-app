@@ -131,23 +131,26 @@ func collectDevices(config apiserver.Configuration) error {
 }
 
 func listenForOutputChanges() {
-	outputs, err := eliona.ListenForOutputChanges()
-	if err != nil {
-		log.Error("eliona", "listening for output changes: %v", err)
-		return
-	}
-	for output := range outputs {
-		// TODO: Filter for only own asset types.
-		height, ok := output.Data["height"]
-		log.Info("output", "%+v\n%+v", output.Data, height)
-		if !ok {
-			log.Debug("eliona", "no 'height' attribute in data: %+v", output)
-			continue
+	for { // We want to restart listening in case something breaks.
+		outputs, err := eliona.ListenForOutputChanges()
+		if err != nil {
+			log.Error("eliona", "listening for output changes: %v", err)
+			return
 		}
-		if err := conf.SetFloorHeight(output.AssetId, height.(float64)); err != nil {
-			log.Error("conf", "setting floor height: %v", err)
-			continue
+		for output := range outputs {
+			// TODO: Filter for only own asset types.
+			height, ok := output.Data["height"]
+			log.Info("output", "%+v\n%+v", output.Data, height)
+			if !ok {
+				log.Debug("eliona", "no 'height' attribute in data: %+v", output)
+				continue
+			}
+			if err := conf.SetFloorHeight(output.AssetId, height.(float64)); err != nil {
+				log.Error("conf", "setting floor height: %v", err)
+				continue
+			}
 		}
+		time.Sleep(time.Second * 5) // Give the server a little break.
 	}
 }
 
