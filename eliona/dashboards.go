@@ -30,7 +30,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 	dashboard.ProjectId = projectId
 	dashboard.Widgets = []api.Widget{}
 
-	beacons, _, err := client.NewClient().AssetsApi.
+	beacons, _, err := client.NewClient().AssetsAPI.
 		GetAssets(client.AuthenticationContext()).
 		AssetTypeName(kontaktio.BeaconAssetType).
 		ProjectId(projectId).
@@ -39,7 +39,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 		return api.Dashboard{}, fmt.Errorf("fetching beacon assets: %v", err)
 	}
 
-	portalBeams, _, err := client.NewClient().AssetsApi.
+	portalBeams, _, err := client.NewClient().AssetsAPI.
 		GetAssets(client.AuthenticationContext()).
 		AssetTypeName(kontaktio.PortalBeamAssetType).
 		ProjectId(projectId).
@@ -139,7 +139,7 @@ func DevicesDashboard(projectId string) (api.Dashboard, error) {
 		dashboard.Widgets = append(dashboard.Widgets, widget)
 	}
 
-	floors, _, err := client.NewClient().AssetsApi.
+	floors, _, err := client.NewClient().AssetsAPI.
 		GetAssets(client.AuthenticationContext()).
 		AssetTypeName(kontaktio.FloorAssetType).
 		ProjectId(projectId).
