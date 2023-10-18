@@ -23,12 +23,15 @@ import (
 	"kontakt-io/eliona"
 	kontaktio "kontakt-io/kontakt-io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	utilshttp "github.com/eliona-smart-building-assistant/go-utils/http"
 	"github.com/eliona-smart-building-assistant/go-utils/log"
 )
+
+var once sync.Once
 
 // collectData is the main app function which is called periodically
 func collectData() {
@@ -38,7 +41,9 @@ func collectData() {
 		return
 	}
 	if len(configs) == 0 {
-		log.Info("conf", "No configs in DB")
+		once.Do(func() {
+			log.Info("conf", "No configs in DB. Please configure the app in Eliona.")
+		})
 		return
 	}
 
