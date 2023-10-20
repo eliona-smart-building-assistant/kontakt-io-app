@@ -40,6 +40,7 @@ create table if not exists kontakt_io.location
 	project_id       text      not null,
 	global_asset_id  text      not null,
 	floor_height     float,
+	room_number      integer,
 	asset_id         integer
 );
 

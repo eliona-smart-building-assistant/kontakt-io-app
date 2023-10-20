@@ -193,12 +193,25 @@ func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, pro
 	return common.Ptr(dbLocations[0].AssetID.Int32), nil
 }
 
-func InsertLocation(ctx context.Context, config apiserver.Configuration, projId string, globalAssetID string, assetId int32) error {
+func GetLocationAssetIdByRoomNumber(ctx context.Context, config apiserver.Configuration, projId string, roomNumber int32) (*int32, error){
+	dbLocations, err := appdb.Locations(
+		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
+		appdb.LocationWhere.ProjectID.EQ(projId),
+		appdb.LocationWhere.RoomNumber.EQ(null.Int32From(roomNumber)),
+	).AllG(ctx)
+	if err != nil || len(dbLocations) == 0 {
+		return nil, err
+	}
+	return common.Ptr(dbLocations[0].AssetID.Int32), nil
+}
+
+func InsertLocation(ctx context.Context, config apiserver.Configuration, projId string, globalAssetID string, roomNumber *int32, assetId int32) error {
 	var dbLocation appdb.Location
 	dbLocation.ConfigurationID = null.Int64FromPtr(config.Id).Int64
 	dbLocation.ProjectID = projId
 	dbLocation.GlobalAssetID = globalAssetID
 	dbLocation.AssetID = null.Int32From(assetId)
+	dbLocation.RoomNumber = null.Int32FromPtr(roomNumber)
 	return dbLocation.InsertG(ctx, boil.Infer())
 }
 

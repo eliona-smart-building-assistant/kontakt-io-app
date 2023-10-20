@@ -18,12 +18,13 @@ package kontaktio
 import (
 	"context"
 	"fmt"
-	"github.com/eliona-smart-building-assistant/go-eliona/utils"
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/eliona-smart-building-assistant/go-eliona/utils"
 
 	"github.com/eliona-smart-building-assistant/go-utils/common"
 	"github.com/eliona-smart-building-assistant/go-utils/http"
@@ -63,9 +64,10 @@ type Floor struct {
 }
 
 type Room struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Floor Floor  `json:"floor"`
+	ID         int    `json:"id"`
+	RoomNumber int32  `json:"roomNumber"`
+	Name       string `json:"name"`
+	Floor      Floor  `json:"floor"`
 }
 
 type locationsResponse struct {
@@ -97,6 +99,7 @@ type Device struct {
 	AirQuality     int     `json:"airQuality"`
 	AirPressure    float64 `json:"airPressure"`
 	PeopleCount    int     `json:"numberOfPeopleDetected"`
+	RoomNumberIr   *int32  `json:"-"`
 
 	Type          string
 	WorldPosition []float64
@@ -115,6 +118,7 @@ type deviceInfo struct {
 	Name         string `json:"name" eliona:"name,filterable"`
 	Mac          string `json:"mac" eliona:"mac,filterable"`
 	Firmware     string `json:"firmware" eliona:"firmware,filterable"`
+	RoomNumberIr *int32 `json:"irRoomNumber"`
 }
 
 type deviceResponse struct {
@@ -158,6 +162,7 @@ func fetchDevices(config apiserver.Configuration) (map[string]Device, error) {
 			BatteryLevel: device.BatteryLevel,
 			Firmware:     device.Firmware,
 			Product:      device.Product,
+			RoomNumberIr: device.RoomNumberIr,
 		}
 	}
 
@@ -298,6 +303,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 		tag.Name = t.Name
 		tag.BatteryLevel = t.BatteryLevel
 		tag.Firmware = t.Firmware
+		tag.RoomNumberIr = t.RoomNumberIr
 		tagsSlice = append(tagsSlice, tag)
 	}
 
