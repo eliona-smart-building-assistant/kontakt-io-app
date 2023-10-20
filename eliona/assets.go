@@ -36,7 +36,7 @@ func isTracker(assetType string) bool {
 	return assetType == kontaktio.TagAssetType || assetType == kontaktio.BadgeAssetType
 }
 
-func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string) (int32, error) {
+func createAssetIfNecessary(config apiserver.Configuration, projectId string, id string, parentId *int32, assetType string, name string, roomNumber *int32) (int32, error) {
 	assetData := assetData{
 		config:                  config,
 		projectId:               projectId,
@@ -45,6 +45,7 @@ func createAssetIfNecessary(config apiserver.Configuration, projectId string, id
 		assetType:               assetType,
 		name:                    name,
 		description:             fmt.Sprintf("%s (%v)", name, id),
+		roomNumber:              roomNumber,
 	}
 	_, assetID, err := upsertAsset(assetData)
 	if err != nil {
@@ -60,15 +61,15 @@ func CreateLocationAssetsIfNecessary(config apiserver.Configuration, rooms []kon
 			return err
 		}
 		for _, room := range rooms {
-			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, kontaktio.BuildingAssetType, room.Floor.Building.Name)
+			buildingAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.Building.ID), &rootAssetID, kontaktio.BuildingAssetType, room.Floor.Building.Name, nil)
 			if err != nil {
 				return err
 			}
-			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, kontaktio.FloorAssetType, room.Floor.Name)
+			floorAssetID, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.Floor.ID), &buildingAssetID, kontaktio.FloorAssetType, room.Floor.Name, nil)
 			if err != nil {
 				return err
 			}
-			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, kontaktio.RoomAssetType, room.Name); err != nil {
+			if _, err := createAssetIfNecessary(config, projectId, fmt.Sprint(room.ID), &floorAssetID, kontaktio.RoomAssetType, room.Name, &room.RoomNumber); err != nil {
 				return err
 			}
 		}
@@ -83,7 +84,16 @@ func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kon
 			return err
 		}
 		for _, device := range devices {
-			_, err := createAssetIfNecessary(config, projectId, device.ID, &rootAssetID, device.Type, device.Name)
+			parentAssetId := rootAssetID
+			if device.RoomNumberIr != nil && *device.RoomNumberIr != 0 {
+				if roomAssetId, err := conf.GetLocationAssetIdByRoomNumber(context.Background(), config, projectId, *device.RoomNumberIr); err != nil {
+					log.Debug("conf", "finding room number %v: %v", *device.RoomNumberIr, err)
+					// Ignore this error, we can continue with nil.
+				} else if roomAssetId != nil {
+					parentAssetId = *roomAssetId
+				}
+			}
+			_, err := createAssetIfNecessary(config, projectId, device.ID, &parentAssetId, device.Type, device.Name, nil)
 			if err != nil {
 				return err
 			}
@@ -93,7 +103,7 @@ func CreateDeviceAssetsIfNecessary(config apiserver.Configuration, devices []kon
 }
 
 func createRootAssetIfNecessary(config apiserver.Configuration, projectId string) (int32, error) {
-	rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, kontaktio.RootAssetType, "Kontakt.io")
+	rootAssetID, err := createAssetIfNecessary(config, projectId, "", nil, kontaktio.RootAssetType, "Kontakt.io", nil)
 	return rootAssetID, err
 }
 
@@ -106,6 +116,7 @@ type assetData struct {
 	assetType               string
 	name                    string
 	description             string
+	roomNumber              *int32
 }
 
 func upsertAsset(d assetData) (created bool, assetID int32, err error) {
@@ -145,7 +156,7 @@ func upsertAsset(d assetData) (created bool, assetID int32, err error) {
 			return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
 		}
 	} else {
-		if err := conf.InsertLocation(context.Background(), d.config, d.projectId, d.identifier, *newID); err != nil {
+		if err := conf.InsertLocation(context.Background(), d.config, d.projectId, d.identifier, d.roomNumber, *newID); err != nil {
 			return false, 0, fmt.Errorf("inserting asset to config db: %v", err)
 		}
 	}
