@@ -26,7 +26,7 @@ RUN DATE=$(date) && \
     GIT_COMMIT=$(git rev-list -1 HEAD) && \
     go build -ldflags "-X 'kontakt-io/apiservices.BuildTimestamp=$DATE' -X 'kontakt-io/apiservices.GitCommit=$GIT_COMMIT'" -o ../app
 
-FROM eliona/base-alpine:latest-3.18 AS target
+FROM eliona/base-alpine:latest AS target
 
 COPY --from=build /app ./
 COPY conf/*.sql ./conf/
