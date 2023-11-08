@@ -21,7 +21,6 @@ import (
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
 	kontaktio "kontakt-io/kontakt-io"
-	"math"
 	"time"
 
 	api "github.com/eliona-smart-building-assistant/go-eliona-api-client/v2"
@@ -146,29 +145,29 @@ type deviceInfoDataPayload struct {
 }
 
 type deviceStatusDataPayload struct {
-	BatteryLevel string `json:"battery_level"`
+	BatteryLevel int `json:"battery_level"`
 }
 
 type badgeInputDataPayload struct {
 	WorldPosition []float64 `json:"pos_world"`
-	Temperature   string    `json:"temperature"`
+	Temperature   float64   `json:"temperature"`
 }
 
 type beaconInputDataPayload struct {
-	AirPressure    string `json:"air_pressure"`
-	Humidity       string `json:"humidity"`
-	LightIntensity string `json:"light_intensity"`
-	Temperature    string `json:"temperature"`
-	AirQuality     string `json:"air_quality"`
+	AirPressure    float64 `json:"air_pressure"`
+	Humidity       int     `json:"humidity"`
+	LightIntensity int     `json:"light_intensity"`
+	Temperature    float64 `json:"temperature"`
+	AirQuality     int     `json:"air_quality"`
 }
 
 type portalBeamInputDataPayload struct {
-	AirPressure    string `json:"air_pressure"`
-	Humidity       string `json:"humidity"`
-	LightIntensity string `json:"light_intensity"`
-	Temperature    string `json:"temperature"`
-	AirQuality     string `json:"air_quality"`
-	PeopleCount    string `json:"people_count"`
+	AirPressure    float64 `json:"air_pressure"`
+	Humidity       int     `json:"humidity"`
+	LightIntensity int     `json:"light_intensity"`
+	Temperature    float64 `json:"temperature"`
+	AirQuality     int     `json:"air_quality"`
+	PeopleCount    int     `json:"people_count"`
 }
 
 type tagInputDataPayload struct {
@@ -198,7 +197,7 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		api.SUBTYPE_STATUS,
 		*assetId,
 		deviceStatusDataPayload{
-			BatteryLevel: fmt.Sprint(device.BatteryLevel),
+			BatteryLevel: device.BatteryLevel,
 		},
 	); err != nil {
 		return err
@@ -212,25 +211,25 @@ func upsertTagData(config apiserver.Configuration, projectId string, device kont
 		}
 	case kontaktio.BeaconAssetType:
 		inputData = beaconInputDataPayload{
-			Humidity:       fmt.Sprint(device.Humidity),
-			LightIntensity: fmt.Sprint(device.LightIntensity),
-			Temperature:    fmt.Sprint(math.Round(device.Temperature*10) / 10),
-			AirQuality:     fmt.Sprint(device.AirQuality),
-			AirPressure:    fmt.Sprint(device.AirPressure),
+			Humidity:       device.Humidity,
+			LightIntensity: device.LightIntensity,
+			Temperature:    device.Temperature,
+			AirQuality:     device.AirQuality,
+			AirPressure:    device.AirPressure,
 		}
 	case kontaktio.PortalBeamAssetType:
 		inputData = portalBeamInputDataPayload{
-			Humidity:       fmt.Sprint(device.Humidity),
-			LightIntensity: fmt.Sprint(device.LightIntensity),
-			Temperature:    fmt.Sprint(math.Round(device.Temperature*10) / 10),
-			AirQuality:     fmt.Sprint(device.AirQuality),
-			AirPressure:    fmt.Sprint(device.AirPressure),
-			PeopleCount:    fmt.Sprint(device.PeopleCount),
+			Humidity:       device.Humidity,
+			LightIntensity: device.LightIntensity,
+			Temperature:    device.Temperature,
+			AirQuality:     device.AirQuality,
+			AirPressure:    device.AirPressure,
+			PeopleCount:    device.PeopleCount,
 		}
 	case kontaktio.BadgeAssetType:
 		inputData = badgeInputDataPayload{
 			WorldPosition: device.WorldPosition,
-			Temperature:   fmt.Sprint(math.Round(device.Temperature*10) / 10),
+			Temperature:   device.Temperature,
 		}
 	default:
 		return fmt.Errorf("unknown asset type \"%s\"", device.Type)
