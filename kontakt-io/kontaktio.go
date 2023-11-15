@@ -181,7 +181,7 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Dev
 	}
 	trackingIDsFormatted := strings.Join(trackingIDs, ",")
 	now := time.Now().UTC()
-	startTime := now.Add(-5 * time.Minute)
+	startTime := now.Add(-2 * time.Minute) // The devices should report themselves every 1 minute, so we should give some margin.
 	startTimeFormatted := startTime.Format(time.RFC3339)
 	endTimeFormatted := now.Format(time.RFC3339)
 
@@ -189,6 +189,8 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Dev
 	q.Set("trackingId", trackingIDsFormatted)
 	q.Set("startTime", startTimeFormatted)
 	q.Set("endTime", endTimeFormatted)
+	q.Set("size", "2000") // 2000 is the biggest allowed page size
+	// q.Set("sort", "timestamp,desc") - not respected at all, for some reason.
 	u.RawQuery = q.Encode()
 
 	r, err := http.NewRequestWithApiKey(u.String(), "API-Key", config.ApiKey)
