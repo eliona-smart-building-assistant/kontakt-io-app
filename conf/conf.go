@@ -193,7 +193,7 @@ func GetLocationAssetId(ctx context.Context, config apiserver.Configuration, pro
 	return common.Ptr(dbLocations[0].AssetID.Int32), nil
 }
 
-func GetLocationAssetIdByRoomNumber(ctx context.Context, config apiserver.Configuration, projId string, roomNumber int32) (*int32, error){
+func GetLocationAssetIdByRoomNumber(ctx context.Context, config apiserver.Configuration, projId string, roomNumber int32) (*int32, error) {
 	dbLocations, err := appdb.Locations(
 		appdb.LocationWhere.ConfigurationID.EQ(null.Int64FromPtr(config.Id).Int64),
 		appdb.LocationWhere.ProjectID.EQ(projId),
