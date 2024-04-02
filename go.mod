@@ -4,9 +4,9 @@ go 1.20
 
 require (
 	github.com/eliona-smart-building-assistant/app-integration-tests v1.1.0
-	github.com/eliona-smart-building-assistant/go-eliona v1.9.34
+	github.com/eliona-smart-building-assistant/go-eliona v1.9.36
 	github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.6.8
-	github.com/eliona-smart-building-assistant/go-utils v1.1.0
+	github.com/eliona-smart-building-assistant/go-utils v1.1.1
 	github.com/friendsofgo/errors v0.9.2
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.1
@@ -30,7 +30,7 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.3 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
-	github.com/jackc/pgtype v1.14.2 // indirect
+	github.com/jackc/pgtype v1.14.3 // indirect
 	github.com/jackc/pgx/v4 v4.18.3 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
