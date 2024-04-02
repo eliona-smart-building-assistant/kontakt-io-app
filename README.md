@@ -2,6 +2,10 @@
 
 This [Eliona app for Kontakt.io](https://github.com/eliona-smart-building-assistant/kontakt-io-app) connects the [Kontakt.io devices](https://kontakt.io/) to an [Eliona](https://www.eliona.io/) environment.
 
+*Note that the tracking using tags works, but will not be displayed by the frontend, as it's implemented using legacy method.
+
+Eliona v12 has new tracking implementation and will provide improved user experience. To leverage that once we have use-cases for tracking, localino app has a reference implementation.*
+
 ## Configuration
 
 The app needs environment variables and database tables for configuration. To edit the database tables the app provides an own API access.
