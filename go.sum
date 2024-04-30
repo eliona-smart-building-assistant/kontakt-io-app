@@ -118,10 +118,10 @@ github.com/dnaeon/go-vcr v1.2.0/go.mod h1:R4UdLID7HZT3taECzJs4YgbbH6PIGXB6W/sc5O
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/eliona-smart-building-assistant/app-integration-tests v1.1.0 h1:nId5qhMuZCsfRCbeN1B+sB8Vx+Jmfkv5kKhNgv5LTN4=
 github.com/eliona-smart-building-assistant/app-integration-tests v1.1.0/go.mod h1:a9kmFOzamBjkFXMalPwo3YO3zVt9gY5iJ+eiTtl7QtY=
-github.com/eliona-smart-building-assistant/go-eliona v1.9.36 h1:SUWqoKNKrqio02GWOYJM5fn1R4e3VV0FXoLCNpMSIiY=
-github.com/eliona-smart-building-assistant/go-eliona v1.9.36/go.mod h1:S67bWJqJ+n2RrcGRsWOODy/30RZ2WEL5zHr02IefvSQ=
-github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.6.8 h1:BRf8+NFeE9YjhvojtZ+wZ0sVkCqU3bW8Kw5bCAE7pVo=
-github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.6.8/go.mod h1:zmDwXqNsAbus7kkmVK+aFppvVtAZ9g7onGpY04gOiUE=
+github.com/eliona-smart-building-assistant/go-eliona v1.9.37 h1:mLM6IR7MCQ+0lx0jnrLbXoqCKpsFdKUmaK1dIcC3Lg0=
+github.com/eliona-smart-building-assistant/go-eliona v1.9.37/go.mod h1:S67bWJqJ+n2RrcGRsWOODy/30RZ2WEL5zHr02IefvSQ=
+github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.6.12 h1:DygiZXbvvVEGRV5eTF6MwwcSFyR0X9l4b0WLchGZF0I=
+github.com/eliona-smart-building-assistant/go-eliona-api-client/v2 v2.6.12/go.mod h1:+xiOXCnskMRTVXRDi+LCVXjL+1280Aga6HsTPqr5Tz4=
 github.com/eliona-smart-building-assistant/go-utils v1.1.1 h1:M2ftQRVRIrFBeHlHaYukblkSb0jBqwG52iwEQNKHXvs=
 github.com/eliona-smart-building-assistant/go-utils v1.1.1/go.mod h1:rcRDJItD62tXkniILeEWE0LpHHitfDJbJzIDsw71AfE=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
@@ -574,8 +574,8 @@ golang.org/x/crypto v0.0.0-20220511200225-c6db032c6c88/go.mod h1:IxCIyHEi3zRg3s0
 golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
 golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
 golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
-golang.org/x/crypto v0.21.0 h1:X31++rzVUdKhX5sWmSOFZxx8UW/ldWx55cbf08iNAMA=
-golang.org/x/crypto v0.21.0/go.mod h1:0BP7YvVV9gBbVKyeTG0Gyn+gZm94bibOW5BjDEYAOMs=
+golang.org/x/crypto v0.22.0 h1:g1v0xeRhjcugydODzvb3mEM9SQ0HGp9s/nh3COQ/C30=
+golang.org/x/crypto v0.22.0/go.mod h1:vr6Su+7cTlO45qkww3VDJlzDn0ctJvRgYbC2NvXHt+M=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
@@ -666,8 +666,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
 golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
 golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
 golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
-golang.org/x/net v0.22.0 h1:9sGLhx7iRIHEiX0oAJ3MRZMUCElJgy7Br1nO+AMN3Tc=
-golang.org/x/net v0.22.0/go.mod h1:JKghWKKOSdJwpW2GEx0Ja7fmaKnMsbu+MWVZTokSYmg=
+golang.org/x/net v0.24.0 h1:1PcaxkF854Fu3+lvBIx5SYn9wRlBzzcnHZSiaFFAb0w=
+golang.org/x/net v0.24.0/go.mod h1:2Q7sJY5mzlzWjKtYUEXSlBWCdyaioyXzRB2RtU8KVE8=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
