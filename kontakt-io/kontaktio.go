@@ -205,7 +205,7 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Dev
 	return telemetryResponse.Content, nil
 }
 
-func fetchPositions(config apiserver.Configuration, tags map[string]Device) ([]Device, error) {
+func fetchPositions(config apiserver.Configuration) ([]Device, error) {
 	positionsUrl := "https://apps.cloud.us.kontakt.io/v2/positions?size=2000"
 	r, err := http.NewRequestWithApiKey(positionsUrl, "API-Key", config.ApiKey)
 	if err != nil {
@@ -241,7 +241,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 		tags[t.ID] = t
 	}
 
-	positions, err := fetchPositions(config, tags)
+	positions, err := fetchPositions(config)
 	if err != nil {
 		return nil, fmt.Errorf("fetching positions: %v", err)
 	}
@@ -275,7 +275,7 @@ func GetDevices(config apiserver.Configuration) ([]Device, error) {
 	for _, tag := range tags {
 		t, ok := devices[tag.ID]
 		if !ok {
-			// This happens due to matching Mac address with trackingID.
+			// This happens due to matching MAC address with trackingID.
 			// As this should only be the case for portal lights that provide no valuable
 			// information, we ignore the error.
 			//
