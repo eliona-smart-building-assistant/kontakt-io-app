@@ -182,37 +182,42 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Dev
 	if err != nil {
 		return nil, fmt.Errorf("shouldn't happen: parsing telemetry URL: %v", err)
 	}
-	trackingIDs := make([]string, 0, len(potentialTags))
-	for id := range potentialTags {
-		trackingIDs = append(trackingIDs, id)
-	}
-	trackingIDsFormatted := strings.Join(trackingIDs, ",")
 	now := time.Now().UTC()
 	startTime := now.Add(-2 * time.Minute) // The devices should report themselves every 1 minute, so we should give some margin.
 	startTimeFormatted := startTime.Format(time.RFC3339)
 	endTimeFormatted := now.Format(time.RFC3339)
 
 	q := u.Query()
-	q.Set("trackingId", trackingIDsFormatted)
 	q.Set("startTime", startTimeFormatted)
 	q.Set("endTime", endTimeFormatted)
 	q.Set("size", "2000") // 2000 is the biggest allowed page size
 	// q.Set("sort", "timestamp,desc") - not respected at all, for some reason.
 	u.RawQuery = q.Encode()
 
-	r, err := http.NewRequestWithApiKey(u.String(), "API-Key", config.ApiKey)
-	if err != nil {
-		return nil, fmt.Errorf("creating request to %s: %v", u.String(), err)
-	}
-	telemetryResponse, statusCode, err := http.ReadWithStatusCode[telemetryResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
-	if err != nil {
-		return nil, fmt.Errorf("reading response from %s: %v", u.String(), err)
-	}
-	if statusCode != nethttp.StatusOK {
-		return nil, fmt.Errorf("status %v while reading response from %s", statusCode, u.String())
+	var devices []Device
+	for id := range potentialTags {
+		q := u.Query()
+		q.Del("trackingId")
+		// While it is possible to query more devices in one query, there is a quite short
+		// server-side timeout, therefore we have to split it by one device.
+		q.Set("trackingId", id)
+		u.RawQuery = q.Encode()
+
+		r, err := http.NewRequestWithApiKey(u.String(), "API-Key", config.ApiKey)
+		if err != nil {
+			return nil, fmt.Errorf("creating request to %s: %v", u.String(), err)
+		}
+		telemetryResponse, statusCode, err := http.ReadWithStatusCode[telemetryResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
+		if err != nil {
+			return nil, fmt.Errorf("reading response from %s: %v", u.String(), err)
+		}
+		if statusCode != nethttp.StatusOK {
+			return nil, fmt.Errorf("status %v while reading response from %s", statusCode, u.String())
+		}
+		devices = append(devices, telemetryResponse.Content...)
 	}
 
-	return telemetryResponse.Content, nil
+	return devices, nil
 }
 
 func fetchPositions(config apiserver.Configuration) ([]Device, error) {
