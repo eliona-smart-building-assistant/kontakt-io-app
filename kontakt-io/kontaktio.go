@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"kontakt-io/apiserver"
 	"kontakt-io/conf"
+	nethttp "net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -80,9 +81,12 @@ func GetRooms(config apiserver.Configuration) ([]Room, error) {
 	if err != nil {
 		return nil, fmt.Errorf("creating request to %s: %v", u, err)
 	}
-	locationsResponse, err := http.Read[locationsResponse](r, time.Duration(*config.RequestTimeout)*time.Second, false)
+	locationsResponse, statusCode, err := http.ReadWithStatusCode[locationsResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", u, err)
+	}
+	if statusCode != nethttp.StatusOK {
+		return nil, fmt.Errorf("status %v while reading response from %s", statusCode, u)
 	}
 	return locationsResponse.Content, nil
 }
@@ -143,9 +147,12 @@ func fetchDevices(config apiserver.Configuration) (map[string]Device, error) {
 	if err != nil {
 		return nil, fmt.Errorf("creating request to %s: %v", deviceUrl, err)
 	}
-	deviceResponse, err := http.Read[deviceResponse](r, time.Duration(*config.RequestTimeout)*time.Second, false)
+	deviceResponse, statusCode, err := http.ReadWithStatusCode[deviceResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", deviceUrl, err)
+	}
+	if statusCode != nethttp.StatusOK {
+		return nil, fmt.Errorf("status %v while reading response from %s", statusCode, deviceUrl)
 	}
 	tags := make(map[string]Device)
 	for _, device := range deviceResponse.Devices {
@@ -197,9 +204,12 @@ func fetchTelemetry(config apiserver.Configuration, potentialTags map[string]Dev
 	if err != nil {
 		return nil, fmt.Errorf("creating request to %s: %v", u.String(), err)
 	}
-	telemetryResponse, err := http.Read[telemetryResponse](r, time.Duration(*config.RequestTimeout)*time.Second, false)
+	telemetryResponse, statusCode, err := http.ReadWithStatusCode[telemetryResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", u.String(), err)
+	}
+	if statusCode != nethttp.StatusOK {
+		return nil, fmt.Errorf("status %v while reading response from %s", statusCode, u.String())
 	}
 
 	return telemetryResponse.Content, nil
@@ -211,9 +221,12 @@ func fetchPositions(config apiserver.Configuration) ([]Device, error) {
 	if err != nil {
 		return nil, fmt.Errorf("creating request to %s: %v", positionsUrl, err)
 	}
-	positionsResponse, err := http.Read[positionsResponse](r, time.Duration(*config.RequestTimeout)*time.Second, false)
+	positionsResponse, statusCode, err := http.ReadWithStatusCode[positionsResponse](r, time.Duration(*config.RequestTimeout)*time.Second, true)
 	if err != nil {
 		return nil, fmt.Errorf("reading response from %s: %v", positionsUrl, err)
+	}
+	if statusCode != nethttp.StatusOK {
+		return nil, fmt.Errorf("status %v while reading response from %s", statusCode, positionsUrl)
 	}
 
 	return positionsResponse.Content, nil
